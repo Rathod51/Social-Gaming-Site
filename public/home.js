@@ -34,30 +34,45 @@ document.querySelector('[data-link="chat.html"]')?.addEventListener("click", () 
 
 //.................real time messages..............
 
+// still one function is remaining for real time notify
 
 
 
 
-//..............create posts..................
 
-const posts = [
-  {
-    id: 1,
-    username: "PlayerOne",
-    text: "Just won my chess match ♟️🔥",
+
+
+
+function savePosts() {
+  localStorage.setItem("posts", JSON.stringify(posts));
+}
+
+function loadPosts() {
+  return JSON.parse(localStorage.getItem("posts")) || [];
+}
+
+let posts = loadPosts();
+
+
+//..............to create posts..................
+function createPost(text, imageURL) {
+    const newPost = {
+    id: Date.now(),
+    username: "You",
+    text,
+    image: "https://i.pravatar.cc/40" || "",
     likes: 0,
+    liked: false,
     comments: []
-  },
-  {
-    id: 2,
-    username: "ProGamer",
-    text: "New high score 🚀",
-    likes: 2,
-    comments: ["Nice!", "GG"]
-  }
-];
+    };
+
+    posts.unshift(newPost);
+    localStorage.setItem("posts", JSON.stringify(posts));
+    renderPosts();
+}
 
 //.....................to render a post......................
+
 function renderPosts() {
   const feed = document.querySelector(".feed");
   feed.innerHTML = "";
@@ -73,26 +88,37 @@ function renderPosts() {
 
         <p class="post-text">${post.text}</p>
 
+         ${post.image ? `<img src="${post.image}" class="post-img">` : ""}
+
         <div class="post-actions">
+            <div class="left-actions">
+                <button class="like-btn">
+                    <i class="${post.liked ? "fa-solid" : "fa-regular"} fa-heart"></i>
+                </button>
+                <span class="like-count">${post.likes}</span>
 
-          <button class="icon-btn like-btn">
-            <i class="fa-regular fa-heart"></i>
-          </button>
-          <span class="like-count">${post.likes}</span>
 
-          <button class="icon-btn comment-btn">
-            <i class="fa-regular fa-comment"></i>
-          </button>
-
+                <button class="icon-btn comment-btn">
+                    <i class="fa-regular fa-comment"></i>
+                </button>
+            </div>    
         </div>
 
         <div class="comment-section" style="display:none;">
-          <div class="comment-list">
-            ${post.comments.map(c => `<div>${c}</div>`).join("")}
-          </div>
+            <input class="comment-input" placeholder="Write comment">
+            <button class="post-comment-btn">Post</button>
+        </div>
 
-          <input class="comment-input" placeholder="Write comment">
-          <button class="post-comment-btn">Post</button>
+
+        <button class="post-options-btn">
+            <i class="fa-solid fa-ellipsis"></i>
+        </button>
+
+        <div class="post-menu">
+            <div class="post-menu-item">Save Post</div>
+            <div class="post-menu-item">Share</div>
+            <div class="post-menu-item">Hide</div>
+            <div class="post-menu-item">Report</div>
         </div>
 
       </div>
@@ -107,47 +133,63 @@ renderPosts();
 
 document.addEventListener("click", (e) => {
 
-  // LIKE
-  if (e.target.closest(".like-btn")) {
-    const postEl = e.target.closest(".post");
-    const id = postEl.dataset.id;
+// open menu
+    if (e.target.closest(".post-options-btn")) {
+        const post = e.target.closest(".post");
+        const menu = post.querySelector(".post-menu");
 
-    const post = posts.find(p => p.id == id);
-    post.likes++;
+        menu.classList.toggle("active");
+    }
 
-    renderPosts();
-  }
-  // fill when clicked
-  if (e.target.closest(".like-btn")) {
-  const btn = e.target.closest(".like-btn");
-  const icon = btn.querySelector("i");
+// close when clicking outside
+    document.querySelectorAll(".post-menu").forEach(menu => {
+        if (!menu.contains(e.target) && !e.target.closest(".post-options-btn")) {
+        menu.classList.remove("active");
+        }
+    });
 
-  icon.classList.toggle("fa-regular");
-  icon.classList.toggle("fa-solid");
-}
+//LIKE
+    if (e.target.closest(".like-btn")) {
+        const postEl = e.target.closest(".post");
+        const id = postEl.dataset.id;
 
-  // TOGGLE COMMENT
-  if (e.target.closest(".comment-btn")) {
-    const section = e.target.closest(".post").querySelector(".comment-section");
+        const post = posts.find(p => p.id == id);
+        
+        post.liked = !post.liked;
+        post.likes += post.liked ? 1 : -1;
 
-    section.style.display =
-      section.style.display === "none" ? "block" : "none";
-  }
+        savePosts();
+        renderPosts();
+    }
 
-  // ADD COMMENT
-  if (e.target.closest(".post-comment-btn")) {
-    const postEl = e.target.closest(".post");
-    const id = postEl.dataset.id;
 
-    const input = postEl.querySelector(".comment-input");
-    const text = input.value.trim();
+  
 
-    if (!text) return;
+//.................. TOGGLE COMMENT ............................
 
-    const post = posts.find(p => p.id == id);
-    post.comments.push(text);
+    if (e.target.closest(".comment-btn")) {
+        const section = e.target.closest(".post").querySelector(".comment-section");
 
-    renderPosts();
-  }
+        section.style.display =
+        section.style.display === "none" ? "block" : "none";
+    }
 
-});
+//.................... ADD COMMENT .........................
+
+    if (e.target.closest(".post-comment-btn")) {
+        const postEl = e.target.closest(".post");
+        const id = postEl.dataset.id;
+
+        const input = postEl.querySelector(".comment-input");
+        const text = input.value.trim();
+
+        if (!text) return;
+
+        const post = posts.find(p => p.id == id);
+        post.comments.push(text);
+
+        savePosts();
+        renderPosts();
+    }
+
+    });

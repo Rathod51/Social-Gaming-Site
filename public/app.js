@@ -1,4 +1,4 @@
-//directed to home page 
+//directed to diffrent page 
 
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("[data-link]").forEach(btn => {
