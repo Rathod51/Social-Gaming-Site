@@ -58,9 +58,7 @@ app.use(express.static(path.join(__dirname, "public")));
             return res.send("Incorrect password!");
         }
 
-        
-        // redirect to home page
-        // res.redirect("/home.html");
+        //redirected to home page
         res.status(200).send("Login successful");
 
         // console.log("form found:", loginForm); {for checking that no user account is active right now }

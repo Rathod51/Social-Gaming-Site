@@ -1,4 +1,42 @@
-// ..........home page operations................
+//directed to home page 
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("[data-link]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const link = btn.dataset.link;
+      if (link) {
+        window.location.href = link;
+      }
+    });
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*................led to play game page..........*/
 
@@ -10,95 +48,7 @@ if(gameBtn){
     };
 }
 
-/*.......................to like the post...............*/
 
-
-document.querySelectorAll(".post").forEach(post => {
-
-    const icon = post.querySelector(".fa-heart");
-    const likeCount = post.querySelector(".like-count");
-
-    let liked = false;
-    let count = 0;
-
-    icon.addEventListener("click", () => {
-        icon.classList.toggle("fa-regular");
-        icon.classList.toggle("fa-solid");
-
-        liked = !liked;
-        count += liked ? 1 : -1;
-
-        likeCount.textContent = count;
-    });
-
-});
-
-/*.......................comment on the post...............*/
-
-document.querySelectorAll(".post").forEach(post => {
-
-    const commentBtn = post.querySelector(".fa-comment");
-    const commentSection = post.querySelector(".comment-section");
-    const input = post.querySelector(".comment-input");
-    const list = post.querySelector(".comment-list");
-    const postBtn = post.querySelector(".post-comment");
-
-    commentBtn.addEventListener("click", () => {
-        commentSection.style.display =
-            commentSection.style.display === "none" ? "block" : "none";
-    });
-
-    postBtn.addEventListener("click", () => {
-        const text = input.value.trim();
-        if (!text) return;
-
-        const div = document.createElement("div");
-        div.textContent = text;
-
-        list.appendChild(div);
-        input.value = "";
-    });
-
-});
-
-/*.......................to share the post...............*/
-
-document.querySelectorAll(".post").forEach(post => {
-
-    const shareBtn = post.querySelector(".fa-paper-plane");
-    const shareBox = post.querySelector(".share-box");
-
-    shareBtn.addEventListener("click", () => {
-        shareBox.style.display =
-            shareBox.style.display === "none" ? "block" : "none";
-    });
-
-    post.querySelectorAll(".share-user").forEach(user => {
-        user.addEventListener("click", () => {
-            alert("Shared with " + user.textContent);
-        });
-    });
-
-});
-
-
-/*.......................to save the post...............*/
-
-document.querySelectorAll(".fa-bookmark").forEach(icon => {
-
-    let saved = false;
-
-    icon.addEventListener("click", () => {
-        icon.classList.toggle("fa-regular");
-        icon.classList.toggle("fa-solid");
-        saved = !saved;
-    });
-});
-
-
-
-
-    
 /*..............to diiferent users chats.....................*/
 
 const chatUsers = document.querySelectorAll(".chat-user");
@@ -145,24 +95,6 @@ input.addEventListener("keypress", function(e){
         sendBtn.click();
     }
 });
-
-
-
-/* ........................for reel scroling..................*/
-
-// const videos = document.querySelectorAll(".reel-video");
-
-// const observer = new IntersectionObserver((entries)=>{
-//     entries.forEach(entry=>{
-//         if(entry.isIntersecting){
-//             entry.target.play();
-//         } else {
-//             entry.target.pause();
-//         }
-//     });
-// },{threshold:0.7});
-
-// videos.forEach(video=>observer.observe(video));
 
 
 
