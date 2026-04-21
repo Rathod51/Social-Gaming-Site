@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Room</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+<style>
+
+body{
+    margin:0;
+    display:flex;
+    font-family:Arial;
+    background:#1e1e2f;
+    color:white;
+}
+
+/* SIDEBAR 
+
+.sidebar{
+    width:50px;
+    background:#2f2f5f;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top:50px;
+    gap:15px;
+}
+
+.sidebar-btn{
+    background:none;
+    border:none;
+    color:white;
+    font-size:25px;
+    cursor:pointer;
+}
+
+.sidebar button:hover{
+    transform:scale(1.15);
+    background: transparent;
+} */
+
+/* GAME AREA */
+
+.game-area{
+    flex:1;
+    padding:20px;
+    position:relative;
+}
+
+/* TOP BUTTONS */
+
+.top-controls{
+    position:fixed;
+    top:20px;
+    right:20px;
+    display:flex;
+    gap:10px;
+    
+}
+
+.game-box{
+    margin-top:80px;
+    text-align:center;
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    
+}
+
+
+.top-ctrlBtn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:none;
+    border:none;
+    color:white;
+    font-size:24px;
+    cursor:pointer;
+    padding:10px;
+    border-radius:8px;
+}
+
+.top-ctrlBtn:hover{
+    background: transparent;
+    transform:scale(1.20);
+}
+
+</style>
+
+</head>
+
+<body>
+
+    <!-- <div class="sidebar">
+
+        <button class="nav-btn sidebar-btn" id="homeBtn"  onclick="location.href='home.html'"><i class="fa-solid fa-house"></i></button>
+        <button class="nav-btn sidebar-btn" id="notificationBtn" onclick="location.href='.html'"><i class="fa-solid fa-bell"></i></button>
+        <button class="nav-btn sidebar-btn" id="playGameBtn" onclick="location.href='game-setup.html'"><i class="fa-solid fa-gamepad"></i></button>
+        <button class="nav-btn sidebar-btn" id="profileBtn" onclick="location.href='.html'"><i class="fa-solid fa-user"></i></button>
+        <button class="nav-btn sidebar-btn" id="settingBn" onclick="location.href='.html'"><i class="fa-solid fa-gear"></i></button>
+
+    </div> -->
+   
+    <div class="game-area">
+        <div class="top-controls">
+                <button id="infoBtn" class="top-ctrlBtn"><i class="fa-regular fa-circle-user"></i></button>
+                <button id="quitBtn" class="top-ctrlBtn"><i class="fa-regular fa-rectangle-xmark"></i></button>
+        </div>
+
+
+        <div class="game-box" id="gameBox">
+            <h2 id="gameTitle"></h2>
+            <p id="modeText"></p>
+        </div>
+    </div>
+
+   
+
+<script>
+
+/* GET PARAMETERS */
+
+const params=new URLSearchParams(window.location.search);
+
+const role=params.get("role");
+const game=params.get("game");
+
+document.getElementById("gameTitle").innerText=`Game: ${game}`;
+
+if(role==="audience"){
+
+document.getElementById("modeText").innerText="You are watching the game";
+
+}else{
+
+document.getElementById("modeText").innerText="You are playing the game";
+
+}
+
+/* QUIT BUTTON */
+
+const quit = document.getElementById("quitBtn");
+if(quit){
+    quit.addEventListener("click", () => {
+        if(confirm("Do you want to quit the game?")){
+            window.location.href="home.html";
+        }
+    });
+} 
+ 
+
+</script>
+
+</body>
+</html>

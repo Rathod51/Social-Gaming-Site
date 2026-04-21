@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+<style>
+
+body{
+background:#1e1e2f;
+font-family:Arial;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:#2f2f5f;
+padding:30px;
+border-radius:10px;
+width:350px;
+text-align:center;
+}
+
+button{
+margin:10px;
+padding:10px 20px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+select{
+padding:10px;
+width:100%;
+margin-top:15px;
+}
+
+#q2{
+    display: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card" id="q1">
+
+    <h2>Join as</h2>
+
+    <button onclick="chooseRole('player')">Player</button>
+    <button onclick="chooseRole('audience')">Audience</button>
+
+</div>
+
+
+<div class="card" id="q2">
+
+    <h2>Select Game</h2>
+
+    <select id="gameSelect">
+        <option value="chess">Chess</option>
+        <option value="ludo">Ludo</option>
+        <option value="tic">Tic Tac Toe</option>
+        <option value="cricket">Cricket</option>
+    </select>
+    <button onclick="startGame()">Continue</button>
+
+</div>
+
+
+<script>
+
+let role="";
+
+function chooseRole(r){
+
+role=r;
+
+document.getElementById("q1").style.display="none";
+document.getElementById("q2").style.display="block";
+
+}
+
+function startGame(){
+
+let game=document.getElementById("gameSelect").value;
+
+window.location.href=`game-room.html?role=${role}&game=${game}`;
+
+}
+
+</script>
+
+
+</body>
+</html>

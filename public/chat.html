@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chats</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+<body>
+    
+<!--...................... SIDEBAR......................... -->
+
+<aside class="sidebar">
+
+    <h2 class="logo">🎮 GameHub</h2>
+
+    <button class="nav-btn" onclick="location.href='home.html'">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+    </button>
+
+    <button class="nav-btn" onclick="location.href='notifi.html'">
+        <i class="fa-solid fa-bell"></i>
+        <span>Notifications</span>
+    </button>
+
+    <button class="nav-btn" onclick="location.href='game-setup.html'">
+        <i class="fa-solid fa-gamepad"></i>
+        <span>Play Games</span>
+    </button>
+
+    <button class="nav-btn" id="inviteBtn">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>Invite</span>
+    </button>
+    
+    <button class="nav-btn" id="uploadBtn">
+        <i class="fa-solid fa-plus"></i>
+        <span>Upload</span>
+    </button>
+
+    <button class="nav-btn" onclick="location.href='profile.html'">
+        <i class="fa-solid fa-user"></i>
+        <span>Profile</span>
+    </button>
+
+    <button class="nav-btn" onclick="location.href='setting.html'">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+    </button>
+
+</aside>
+
+
+<!--................... MAIN AREA ...........................-->
+
+<div class="main-area">
+
+<!--.................... TOPBAR .....................-->
+
+    <header class="topbar">
+
+        <input class="search" type="text" placeholder="Search players, games...">
+        <div class="top-actions">
+            <button class="icon-btn" onclick="location.href='reels.html'">
+                <i class="fa-regular fa-square-caret-right"></i>
+            </button>
+        </div>
+
+    </header>
+
+<!--................. CHAT AREA .......................-->
+
+    <div class="chat-container">
+
+        <div class="chat-menu">
+
+            <div class="chat-user">
+                <img src="https://i.pravatar.cc/40" alt="">
+                <div>
+                    <span class="chat-name">PlayerOne</span>
+                    <p class="last-msg">Ready for tonight's game?</p>
+                </div>
+            </div>
+
+            <div class="chat-user">
+                <img src="https://i.pravatar.cc/41" alt="">
+                <div>
+                    <span class="chat-name">GameMaster</span>
+                    <p class="last-msg">Tournament starting soon!</p>
+                </div>
+            </div>
+
+            <div class="chat-user">
+                <img src="https://i.pravatar.cc/42" alt="">
+                <div>
+                    <span class="chat-name">ChessKing</span>
+                    <p class="last-msg">Let's play later ♟️</p>
+                </div>
+            </div>
+
+            <div class="chat-user active">
+                <img src="https://i.pravatar.cc/40" alt="">
+                <div>
+                    <span class="chat-name">PlayerOne</span>
+                    <p class="last-msg">Ready for tonight's game?</p>
+                </div>
+            </div>
+
+            <div class="chat-user">
+                <img src="https://i.pravatar.cc/41" alt="">
+                <div>
+                    <span class="chat-name">GameMaster</span>
+                    <p class="last-msg">Tournament starting soon!</p>
+                </div>
+            </div>
+
+            <div class="chat-user">
+                <img src="https://i.pravatar.cc/42" alt="">
+                <div>
+                    <span class="chat-name">ChessKing</span>
+                    <p class="last-msg">Let's play later ♟️</p>
+                </div>
+            </div>
+
+
+            <div class="chat-user">
+                <img src="https://i.pravatar.cc/40" alt="">
+                <div>
+                    <span class="chat-name">PlayerOne</span>
+                    <p class="last-msg">Ready for tonight's game?</p>
+                </div>
+            </div>
+
+        </div>
+
+
+<!-- ..................CONVERSATION PANNEL................ -->
+
+        <div class="conversation-panel">
+
+        <!--..................... CHAT HEADER .......................-->
+
+            <div class="conversation-header">
+                <img id="userImg" src="https://i.pravatar.cc/40" alt=""> 
+                <span id="userName">PlayerOne</span>
+            </div>
+
+
+        <!-- .......................MESSAGES AREA ....................-->
+
+            <div class="messages" id="messages">
+                <div class="msg other">Ready for tonight's game?</div>
+                <div class="msg me">Yes! Let's start 🎮</div>
+            </div>
+
+        <!--......................... Type Bar........................ -->
+
+            <div class="typebar">
+                <div class="type-actions">
+                    <button class="tb-btn icon-btn" id="loadBtn"><i class="fa-solid fa-plus"></i></button>
+                </div>
+                
+                <input type="text" placeholder="Type your message..." id="msgInput">
+                <div class="type-actions">
+                    <button class="tb-btn icon-btn" id="recordBtn"><i class="fa-solid fa-microphone"></i></button>
+                    <button class="tb-btn icon-btn" id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    
+</div>
+
+
+<script src="app.js" defer></script>
+</body>
+</html>
