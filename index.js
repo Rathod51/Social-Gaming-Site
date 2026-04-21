@@ -36,7 +36,8 @@ app.use(express.static(path.join(__dirname, "public")));
         // redirect to home page
         res.redirect("/home.html");
        
-        //res.send("Signup successful! Go to login page.");
+       
+        
     });
 
 
@@ -59,9 +60,10 @@ app.use(express.static(path.join(__dirname, "public")));
 
         
         // redirect to home page
-        res.redirect("/home.html");
-        
-        //res.send(`Welcome ${user.username}! 🎮`);
+        // res.redirect("/home.html");
+        res.status(200).send("Login successful");
+
+        // console.log("form found:", loginForm); {for checking that no user account is active right now }
     });
 
 
