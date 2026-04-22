@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chats</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="chat.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 </head>
@@ -16,37 +17,37 @@
 
     <h2 class="logo">🎮 GameHub</h2>
 
-    <button class="nav-btn" onclick="location.href='home.html'">
+    <button class="nav-btn" data-link="home.html">
         <i class="fa-solid fa-house"></i>
         <span>Home</span>
     </button>
 
-    <button class="nav-btn" onclick="location.href='notifi.html'">
+    <button class="nav-btn" data-link="notifi.html">
         <i class="fa-solid fa-bell"></i>
         <span>Notifications</span>
     </button>
 
-    <button class="nav-btn" onclick="location.href='game-setup.html'">
+    <button class="nav-btn" data-link="game-setup.html">
         <i class="fa-solid fa-gamepad"></i>
         <span>Play Games</span>
     </button>
 
-    <button class="nav-btn" id="inviteBtn">
+    <button class="nav-btn" data-link="invite.html">
         <i class="fa-solid fa-user-plus"></i>
         <span>Invite</span>
     </button>
     
-    <button class="nav-btn" id="uploadBtn">
+    <button class="nav-btn" data-link="upload.html">
         <i class="fa-solid fa-plus"></i>
         <span>Upload</span>
     </button>
 
-    <button class="nav-btn" onclick="location.href='profile.html'">
+    <button class="nav-btn" data-link="profile.html">
         <i class="fa-solid fa-user"></i>
         <span>Profile</span>
     </button>
 
-    <button class="nav-btn" onclick="location.href='setting.html'">
+    <button class="nav-btn" data-link="setting.html">
         <i class="fa-solid fa-gear"></i>
         <span>Settings</span>
     </button>
@@ -60,15 +61,16 @@
 
 <!--.................... TOPBAR .....................-->
 
-    <header class="topbar">
+     <header class="topbar">
+
+        <div class="topbar-inner">
 
         <input class="search" type="text" placeholder="Search players, games...">
-        <div class="top-actions">
-            <button class="icon-btn" onclick="location.href='reels.html'">
-                <i class="fa-regular fa-square-caret-right"></i>
-            </button>
-        </div>
 
+            <div class="top-actions">
+                <button class="icon-btn top-players-btn" id="topPlayersBtn"> <i class="fa-solid fa-trophy"></i></button>
+            </div>
+        </div>
     </header>
 
 <!--................. CHAT AREA .......................-->

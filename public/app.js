@@ -15,29 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*................led to play game page..........*/
 
 const gameBtn = document.getElementById("playGameBtn");

@@ -10,24 +10,50 @@ if (uploadBtn) {
 
     if (!text && !file) return;
 
-    let imageURL = file ? URL.createObjectURL(file) : "";
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+        const imageURL = e.target.result; // permanent base64
 
-    const newPost = {
-      id: Date.now(),
-      username: "You",
-      text,
-      image: imageURL,
-      likes: 0,
-      liked: false,
-      comments: []
-    };
+        const newPost = {
+        id: Date.now(),
+        username: "You",
+        text,
+        image: imageURL,
+        likes: 0,
+        liked: false,
+        comments: []
+        };
 
-    // save in localStorage
-    const storedPosts = JSON.parse(localStorage.getItem("posts")) || [];
-    storedPosts.unshift(newPost);
-    localStorage.setItem("posts", JSON.stringify(storedPosts));
+        const posts = JSON.parse(localStorage.getItem("posts")) || [];
+        posts.unshift(newPost);
 
-    // redirect to home
-    window.location.href = "home.html";
+        localStorage.setItem("posts", JSON.stringify(posts));
+
+        // 👉 now safe to redirect
+        window.location.href = "home.html";
+      };
+
+      reader.readAsDataURL(file);
+
+      } else {
+        const newPost = {
+          id: Date.now(),
+          username: "You",
+          text,
+          image: "",
+          likes: 0,
+          liked: false,
+          comments: []
+        };
+        // save in localStorage
+
+        const posts = JSON.parse(localStorage.getItem("posts")) || [];
+        posts.unshift(newPost);
+        localStorage.setItem("posts", JSON.stringify(posts));
+      // redirect to home
+
+        window.location.href = "home.html";
+      }
   });
 }

@@ -56,21 +56,42 @@ let posts = loadPosts();
 
 //..............to create posts..................
 function createPost(text, imageURL) {
-    const newPost = {
-    id: Date.now(),
-    username: "You",
-    text,
-    image: "https://i.pravatar.cc/40" || "",
-    likes: 0,
+    let posts = JSON.parse(localStorage.getItem("posts")) || [
+  {
+    id: 1,
+    username: "PlayerOne",
+    text: "Just won my chess match ♟️🔥",
+    image: "https://picsum.photos/600/300",
+    likes: 5,
+    liked: false,
+    comments: ["Nice!", "GG"]
+  },
+  {
+    id: 2,
+    username: "ProGamer",
+    text: "Top score today 🚀",
+    image: "https://picsum.photos/600/301",
+    likes: 12,
     liked: false,
     comments: []
-    };
+  },
+  {
+    id: 3,
+    username: "NoobMaster",
+    text: "Learning new tricks 😎",
+    image: "",
+    likes: 2,
+    liked: false,
+    comments: []
+  }
+];
 
     posts.unshift(newPost);
     localStorage.setItem("posts", JSON.stringify(posts));
     renderPosts();
 }
 
+ console.log(posts);
 //.....................to render a post......................
 
 function renderPosts() {
@@ -82,9 +103,26 @@ function renderPosts() {
       <div class="post" data-id="${post.id}">
 
         <div class="post-header">
-          <img src="https://i.pravatar.cc/40">
-          <span class="username">${post.username}</span>
-        </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="https://i.pravatar.cc/40">
+                <div>
+                    <span class="username">${post.username}</span>
+                    <div class="post-time">2 hours ago</div>
+                </div> 
+                <button class="post-options-btn">
+                  <i    class="fa-solid fa-ellipsis"></i>
+                </button>
+
+              <div class="post-menu">
+                <div class="post-menu-item">Add to Highlightes</div>
+                <div class="post-menu-item">Go to Account</div>
+                <div class="post-menu-item">Copy link</div>
+                <div class="post-menu-item">Share</div>
+                <div class="post-menu-item">Report</div>
+              </div>
+            </div>
+          </div>
+    
 
         <p class="post-text">${post.text}</p>
 
@@ -105,21 +143,18 @@ function renderPosts() {
         </div>
 
         <div class="comment-section" style="display:none;">
+            <div class="comment-list">
+                  ${post.comments.map(c => `<div class="comment-item">${c}</div>`).join("")}
+              </div>
+            
             <input class="comment-input" placeholder="Write comment">
             <button class="post-comment-btn">Post</button>
+
+              
+
         </div>
 
-
-        <button class="post-options-btn">
-            <i class="fa-solid fa-ellipsis"></i>
-        </button>
-
-        <div class="post-menu">
-            <div class="post-menu-item">Save Post</div>
-            <div class="post-menu-item">Share</div>
-            <div class="post-menu-item">Hide</div>
-            <div class="post-menu-item">Report</div>
-        </div>
+        
 
       </div>
     `;
@@ -161,9 +196,6 @@ document.addEventListener("click", (e) => {
         savePosts();
         renderPosts();
     }
-
-
-  
 
 //.................. TOGGLE COMMENT ............................
 
