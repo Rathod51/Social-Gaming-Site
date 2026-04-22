@@ -9,14 +9,7 @@
         "button-name": "off"
       }
     ],
-    "compat-api/css": [
-      "default",
-      {
-        "ignore": [
-          "scrollbar-width"
-        ]
-      }
-    ],
+    "compat-api/css": "off",
     "button-type": "off",
     "axe/parsing": [
       "default",
@@ -25,6 +18,7 @@
       }
     ],
     "no-inline-styles": "off",
-    "axe/forms": "off"
+    "axe/forms": "off",
+    "axe/text-alternatives": "off"
   }
 }

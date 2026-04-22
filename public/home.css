@@ -19,8 +19,6 @@ body {
     justify-content: center;   /* center feed */
     padding: 20px 0;
     margin-top: 70px;
-    overflow-y: auto;
-    
 }
 
 .main-feed {
@@ -206,9 +204,4 @@ body {
     font-size: 13px;
     padding: 6px 0;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.Comment-input{
-    background-origin: 5px;
-    width: 80%;
 }

@@ -5,7 +5,8 @@
     display:flex;
     margin-left:7px;
     padding:20px;
-    gap: 10px;
+    gap: 15px;
+    height: calc(100vh - 80px)
     
 }
 
@@ -32,31 +33,34 @@
     text-decoration:none;
     color:white;
     margin-bottom:10px;
+    transition: 0.2s;
 }
 
 .chat-user img{
-border-radius:50%;
+    width:40px;
+    height:40px;
+    border-radius:50%;
 }
 
 .chat-user:hover{
-background:#4444aa;
+    background:#4444aa;
 }
 
   .chat-user.active{
-background:#4444aa;
+    background:#4444aa;
 }
 
 
 /* TEXT */
 
 .chat-name{
-font-weight:bold;
+    font-weight:bold;
 }
 
 .last-msg{
-font-size:13px;
-opacity:0.7;
-margin:0;
+    font-size:13px;
+    opacity:0.7;
+    margin:0;
 }
 
 /* CONVERSATION PANEL */
@@ -67,7 +71,7 @@ margin:0;
     flex-direction:column;
     background:#2f2f5f;
     border-radius:10px;
-    /* overflow:hidden; */
+    overflow:hidden; 
 }
 
 /* HEADER */
@@ -81,6 +85,8 @@ margin:0;
 }
 
 .conversation-header img{
+    width:40px;
+    height:40px;
     border-radius:50%;
 }
 
@@ -100,7 +106,7 @@ margin:0;
 
 .msg{
     padding:10px 14px;
-    border-radius:12px;
+    border-radius:16px;
     max-width:70%;
     width:fit-content;
     font-size:14px;
@@ -133,8 +139,8 @@ margin:0;
     display:flex;
     align-items:center;
     gap:6px;
-    padding:6px;
-    margin:5px;
+    padding:8px 10px;
+    margin:10px;
     background:#1e1e2f;
     border-radius:25px;
     border-top: none
@@ -148,8 +154,7 @@ margin:0;
     outline:none;
     background:transparent;
     color:white;
-    padding: 0px;
-    margin: 0px;
+    font-size:14px;
 }
 
 /* RIGHT SIDE BUTTONS */
@@ -162,8 +167,45 @@ margin:0;
 /* ICON BUTTON */
 
 #recordBtn, #sendBtn, #loadBtn{
-    border-radius:50%;
+    border:none;
+    background: none;
+    color:white;
+    border-radius:10px;
+    padding:8px;
+    cursor:pointer;
+    transition:0.2s;
     font-size: 14px;
-    padding: 6px;
+} 
+
+
+
+
+/* ================= RESPONSIVE ================= */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .chat-menu {
+        width: 250px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    .chat-container {
+        flex-direction: column;
+        padding: 10px;
+        margin-left: 0;   /* 🔥 IMPORTANT */
+    }
+
+    .chat-menu {
+        width: 100%;
+        height: 200px;
+    }
+
+    .conversation-panel {
+        width: 100%;
+        height: calc(100vh - 260px);
+    }
 }
 

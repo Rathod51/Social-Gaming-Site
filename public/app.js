@@ -1,4 +1,4 @@
-//directed to diffrent page 
+
 
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("[data-link]").forEach(btn => {
@@ -26,52 +26,54 @@ if(gameBtn){
 }
 
 
-/*..............to diiferent users chats.....................*/
+// /*..............to diiferent users chats.....................*/
 
-const chatUsers = document.querySelectorAll(".chat-user");
-const nameBox = document.getElementById("userName");
-const imgBox = document.getElementById("userImg");
+// const chatUsers = document.querySelectorAll(".chat-user");
+// const nameBox = document.getElementById("userName");
+// const imgBox = document.getElementById("userImg");
 
 
-chatUsers.forEach(user => {
-    user.addEventListener("click", () => {
+// chatUsers.forEach(user => {
+//     user.addEventListener("click", () => {
 
-        chatUsers.forEach(u => u.classList.remove("active"));
-        user.classList.add("active");
+//         chatUsers.forEach(u => u.classList.remove("active"));
+//         user.classList.add("active");
     
-        nameBox.textContent = user.querySelector("span").textContent;
-        imgBox.src = user.querySelector("img").src;
+//         nameBox.textContent = user.querySelector("span").textContent;
+//         imgBox.src = user.querySelector("img").src;
 
 
-    });
-});
+//     });
+// });
 
 
-/* .....................to send the message............................ */
+// /* .....................to send the message............................ */
 
-const sendBtn = document.getElementById("sendBtn");
-const input = document.getElementById("msgInput");
-const messages = document.getElementById("messages");
+// const sendBtn = document.getElementById("sendBtn");
+// const input = document.getElementById("msgInput");
+// const messages = document.getElementById("messages");
 
-sendBtn.onclick = ()=>{
+// sendBtn.onclick = ()=>{
 
-    if(input.value.trim() === "") return;
-    let msg = document.createElement("div");
+//     const text = input.value.trim();
+//         if (!text) return;
+//         if (!chats[currentUser]) chats[currentUser] = [];
 
-    msg.className="msg me";
-    msg.textContent=input.value;
-    messages.appendChild(msg);
-    input.value="";
+//         chats[currentUser].push({
+//             sender: "me",
+//             text: text
+//         });
+//     localStorage.setItem("chats", JSON.stringify(chats));
+//     input.value = "";
+//     renderMessages();
 
-    messages.scrollTop=messages.scrollHeight;
+// };
 
-};
-
-input.addEventListener("keypress", function(e){
-    if(e.key === "Enter"){
-        sendBtn.click();
-    }
-});
+// input.addEventListener("keypress", function(e){
+//     if(e.key === "Enter"){
+//         sendBtn.click();
+//     }
+// });
 
 
 
