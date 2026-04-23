@@ -1,59 +1,83 @@
+// ================= SELECT ELEMENTS =================
 
-//to upload
+const textInput = document.getElementById("uploadText");
+const fileInput = document.getElementById("uploadImage");
+const previewImg = document.getElementById("previewImg");
+const postBtn = document.getElementById("postBtn");
 
-const uploadBtn = document.getElementById("uploadBtn");
 
-if (uploadBtn) {
-  uploadBtn.addEventListener("click", () => {
-    const text = document.getElementById("uploadText").value.trim();
-    const file = document.getElementById("uploadImage").files[0];
+// ================= IMAGE PREVIEW =================
+
+fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function () {
+            previewImg.src = reader.result;
+            previewImg.style.display = "block";
+        };
+
+        reader.readAsDataURL(file);
+    } else {
+        previewImg.style.display = "none";
+    }
+});
+
+
+// ================= CREATE POST =================
+
+postBtn.addEventListener("click", () => {
+
+    const text = textInput.value.trim();
+    const file = fileInput.files[0];
 
     if (!text && !file) return;
 
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-        const imageURL = e.target.result; // permanent base64
+    // if image exists → convert to base64
+    if (file) {
 
-        const newPost = {
+        const reader = new FileReader();
+
+        reader.onload = function () {
+            savePost(reader.result);
+        };
+
+        reader.readAsDataURL(file);
+
+    } else {
+        savePost("");
+    }
+
+});
+
+
+// ================= SAVE POST =================
+
+function savePost(imageURL) {
+
+    const newPost = {
         id: Date.now(),
         username: "You",
-        text,
-        image: imageURL,
+        text: textInput.value.trim(),
+        image: imageURL,   // ✅ permanent image
         likes: 0,
         liked: false,
         comments: []
-        };
+    };
 
-        const posts = JSON.parse(localStorage.getItem("posts")) || [];
-        posts.unshift(newPost);
+    let posts = JSON.parse(localStorage.getItem("posts")) || [];
 
-        localStorage.setItem("posts", JSON.stringify(posts));
+    posts.unshift(newPost);
 
-        // 👉 now safe to redirect
-        window.location.href = "home.html";
-      };
+    localStorage.setItem("posts", JSON.stringify(posts));
 
-      reader.readAsDataURL(file);
+    // reset inputs
+    textInput.value = "";
+    fileInput.value = "";
+    previewImg.style.display = "none";
 
-      } else {
-        const newPost = {
-          id: Date.now(),
-          username: "You",
-          text,
-          image: "",
-          likes: 0,
-          liked: false,
-          comments: []
-        };
-        // save in localStorage
-
-        const posts = JSON.parse(localStorage.getItem("posts")) || [];
-        posts.unshift(newPost);
-        localStorage.setItem("posts", JSON.stringify(posts));
-      // redirect to home
-
-        window.location.href = "home.html";
-      }
-  });
+    // go back to home
+    window.location.href = "home.html";
 }

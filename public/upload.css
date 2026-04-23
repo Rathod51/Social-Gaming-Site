@@ -1,0 +1,39 @@
+.upload-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.upload-card{
+    background:#2f2f5f;
+    padding:20px;
+    border-radius:12px;
+    width:400px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+textarea{
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    resize:none;
+    height:80px;
+}
+
+.preview-img{
+    width:100%;
+    display:none;
+    border-radius:8px;
+}
+
+button{
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#6a6aff;
+    color:white;
+    cursor:pointer;
+}

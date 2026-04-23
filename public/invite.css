@@ -1,0 +1,50 @@
+
+.invite-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.invite-card{
+    background:#2f2f5f;
+    padding:20px;
+    border-radius:12px;
+    width:400px;
+}
+
+#searchInput{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    margin-bottom:15px;
+}
+
+.player-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.player{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#1e1e2f;
+    padding:10px;
+    border-radius:8px;
+}
+
+.player button{
+    padding:6px 10px;
+    border:none;
+    border-radius:6px;
+    background:#6a6aff;
+    color:white;
+    cursor:pointer;
+}
+
+.player button.invited{
+    background:gray;
+}
