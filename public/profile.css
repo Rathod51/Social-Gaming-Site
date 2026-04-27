@@ -71,27 +71,44 @@ body {
 
 /* BUTTONS */
 .actions {
-    margin-top: 10px;
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;   /* for clean spacing */
 }
 
 button {
-    padding: 8px 12px;
+    padding: 12px 20px;
+    font-size: 15px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     margin: 5px;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: all 0.2s ease;
+    color: white;
+    font-weight: 500;
 }
 
-button:hover {
+button:hover:not(.menu-btn):not(.pause-btn) {
     background: rgba(255,255,255,0.1);
+    transform: translateY(-1px);
 }
 
 .primary, .secondary {
     background: transparent;
     border: 1px solid #6a6aff;
     padding: 8px 16px;
-    min-width: 120px;
+    min-width: 180px;
+}
+
+@media (max-width: 768px) {
+    button {
+        width: 100%;   /* full width buttons */
+    }
+
+    .actions {
+        flex-direction: column;
+    }
 }
 
 /* HIGHLIGHTS ROW */
@@ -111,6 +128,8 @@ button:hover {
     flex-shrink: 0;
 }
 
+
+
 /* CIRCLE */
 .circle {
     width: 65px;
@@ -122,6 +141,12 @@ button:hover {
     justify-content: center;
     font-size: 22px;
     transition: transform 0.2s ease;
+}
+.highlight-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 /* TEXT */
@@ -221,46 +246,23 @@ button:hover {
     display:flex;
     justify-content:center;
     align-items:center;
-    z-index:1000;
+    z-index:2000;
 }
 
-.modal-card {
-    background:#2f2f5f;
-    padding:20px;
-    border-radius:12px;
-    width:300px;
-    text-align:center;
+/* STORY CONTAINER (MOBILE STYLE CENTER) */
+.story-view {
+    width: 100%;
+    max-width: 420px;
+    height: calc(100vh - 60px);
+    margin: 3opx 0;
+    border-radius: 14px;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    justify-content: center;
+    align-items: center;
 }
 
-.modal-card input,
-.modal-card textarea {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border:none;
-    border-radius:8px;
-    background:#1e1e2f;
-    color:white;
-}
-
-.modal-actions {
-    display:flex;
-    justify-content:space-between;
-}
-
-.modal-actions button {
-    padding:8px 12px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-#saveHighlight {
-    background:#6a6aff;
-    color:white;
-}
-
-#closeModal {
-    background:#444;
-    color:white;
-}

@@ -1,0 +1,203 @@
+/* ================= STORY FULLSCREEN FIX ================= */
+
+.story-controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.story-overlay {
+    position: fixed;   /* THIS IS THE MAIN FIX */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(23, 22, 22, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;   /* above everything */
+}
+
+/* TOP HEADER */
+.story-header {
+    position: absolute;
+    top: 25px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 2;
+}
+
+.story-img-full {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    z-index: 1;
+}
+
+.story-view::after {
+    content: "";
+    background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent 30%, transparent 70%, rgba(0,0,0,0.6));
+    pointer-events: none
+}
+
+.story-overlay-text {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    right: 20px;
+    z-index: 2;
+    font-size: 18px;
+    text-align: center;
+}
+
+.menu-btn,
+.pause-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.menu-btn:hover,
+.pause-btn:hover {
+    transform: scale(1.1);
+}
+
+.story-progress {
+    position: absolute;
+    top: 12px;
+    left: 10px;
+    right: 10px;
+    height: 3px;
+    background: rgba(255,255,255,0.3);
+    z-index: 3;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: white;
+    transition: width 5s linear;
+}
+
+/* AVATAR */
+.story-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+
+/* USER TEXT */
+.story-user {
+    display: flex;
+    flex-direction: column;
+}
+
+.story-username {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.story-time {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+/* MENU CONTAINER */
+.story-menu {
+    margin-left: auto;
+    position: relative;
+}
+
+/* THREE DOT BUTTON */
+.menu-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* DROPDOWN */
+.menu-dropdown {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background: #444;
+    border-radius: 10px;
+    padding: 5px;
+    display: none;
+    flex-direction: column;
+    min-width: 200px;
+    z-index: 10;
+}
+
+/* SHOW MENU */
+.menu-dropdown.active {
+    display: flex;
+}
+
+/* ITEMS */
+
+.menu-item {
+    padding: 12px 16px;    
+   font-size: 15px;        
+    cursor: pointer;
+    border-radius: 6px;     
+    transition: all 0.2s ease;
+}
+
+/* hover effect */
+.menu-item:hover {
+    background: white;     
+    color: black;          
+}
+
+
+.modal-card {
+    background:#2f2f5f;
+    padding:20px;
+    border-radius:12px;
+    width:300px;
+    text-align:center;
+}
+
+.modal-card input,
+.modal-card textarea {
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border:none;
+    border-radius:8px;
+    background:#1e1e2f;
+    color:white;
+}
+
+.modal-actions {
+    display:flex;
+    justify-content:space-between;
+}
+
+.modal-actions button {
+    padding:8px 12px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+#saveHighlight {
+    background:#6a6aff;
+    color:white;
+}
+
+#closeModal {
+    background:#444;
+    color:white;
+}
