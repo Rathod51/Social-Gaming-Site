@@ -142,6 +142,7 @@ button:hover:not(.menu-btn):not(.pause-btn) {
     font-size: 22px;
     transition: transform 0.2s ease;
 }
+
 .highlight-img {
     width: 100%;
     height: 100%;
@@ -249,20 +250,10 @@ button:hover:not(.menu-btn):not(.pause-btn) {
     z-index:2000;
 }
 
-/* STORY CONTAINER (MOBILE STYLE CENTER) */
-.story-view {
-    width: 100%;
-    max-width: 420px;
-    height: calc(100vh - 60px);
-    margin: 3opx 0;
-    border-radius: 14px;
-    background: #000;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    color: white;
-    justify-content: center;
-    align-items: center;
+.modal-card {
+    background:#2f2f5f;
+    padding:20px;
+    border-radius:12px;
+    width:300px;
+    text-align:center;
 }
-
