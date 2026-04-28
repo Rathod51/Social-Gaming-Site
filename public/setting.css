@@ -1,0 +1,138 @@
+* {
+    box-sizing: border-box;
+}
+
+.settings-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+.section {
+    background: #2f2f5f;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 8px;
+    background: #1e1e2f;
+    color: white;
+}
+
+button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: #6a6aff;
+    color: white;
+    cursor: pointer;
+    width: auto;
+    font-size: 14px;
+}
+
+/* button alignment */
+.section button {
+    align-self: flex-end;
+    margin-top: 12px;
+}
+
+button:hover {
+    background: #7a7aff;
+}
+
+/* PROFILE IMAGE CENTER */
+.profile-preview {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+/* SELECT */
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: none;
+    background: #1e1e2f;
+    color: white;
+}
+
+/* SUGGESTIONS */
+/*.suggestion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.suggestion img {
+    border-radius: 50%;
+}
+
+.suggestion button {
+    padding: 6px 12px;
+    font-size: 13px;
+}*/
+
+/* SWITCH ROW */
+.appearance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* SWITCH STYLE */
+.switch {
+    position: relative;
+    width: 40px;
+    height: 20px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: #444;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    top: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+input:checked + .slider {
+    background: #6a6aff;
+}
+
+input:checked + .slider::before {
+    transform: translateX(20px);
+}

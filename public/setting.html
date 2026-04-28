@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+  <link rel="stylesheet" href="setting.css">
+  <link rel="stylesheet" href="style.css">
+
+
+</head>
+<body>
+
+<div class="settings-container">
+
+  <h2>Settings</h2>
+
+  <!-- PROFILE -->
+  <div class="section">
+    <h3>Profile</h3>
+
+    <!-- PROFILE IMAGE PREVIEW -->
+    <div class="profile-preview">
+        <img id="previewImg" class="profile-img" src="default.png">
+        <input type="file" id="profileImage">
+    </div>
+
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="text" id="username" placeholder="Username">
+    <textarea id="bio" placeholder="Bio"></textarea>
+
+    <select id="gender">
+        <option value="">Select Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+    </select>
+
+    <button id="saveProfile">Save Changes</button>
+  </div>
+
+  <div class="section">
+    <h3>Appearance</h3>
+
+  <div class="appearance-row">
+    <span>Switch Appearance</span>
+        <label class="switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+</div>
+
+  
+  <!-- ACCOUNT -->
+  <div class="section">
+    <h3>Account</h3>
+
+    <input type="password" placeholder="New Password">
+    <button>Update Password</button>
+  </div>
+
+  <!-- LOGOUT -->
+  <div class="section">
+    <button id="logout">Logout</button>
+  </div>
+
+</div>
+
+<script src="setting.js" defer></script>
+<script src="profile.js"></script>
+
+
+</body>
+</html>

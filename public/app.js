@@ -1,4 +1,10 @@
 
+const theme = localStorage.getItem("theme");
+
+if (theme === "light") {
+  document.body.classList.add("light-mode");
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("[data-link]").forEach(btn => {

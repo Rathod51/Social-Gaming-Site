@@ -77,6 +77,12 @@ margin-top:15px;
 
 <script>
 
+    const theme = localStorage.getItem("theme");
+
+if (theme === "light") {
+  document.body.classList.add("light-mode");
+}
+
 let role="";
 
 function chooseRole(r){

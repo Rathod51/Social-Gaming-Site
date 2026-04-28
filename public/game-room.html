@@ -123,6 +123,12 @@ body{
 
 <script>
 
+    const theme = localStorage.getItem("theme");
+
+if (theme === "light") {
+  document.body.classList.add("light-mode");
+}
+
 /* GET PARAMETERS */
 
 const params=new URLSearchParams(window.location.search);

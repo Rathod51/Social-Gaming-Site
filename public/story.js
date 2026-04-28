@@ -1,3 +1,9 @@
+const theme = localStorage.getItem("theme");
+
+if (theme === "light") {
+  document.body.classList.add("light-mode");
+}
+
 function formatTime(timestamp) {
   return new Date(timestamp).toLocaleTimeString([], {
     hour: "2-digit",

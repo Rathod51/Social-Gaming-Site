@@ -1,3 +1,29 @@
+const theme = localStorage.getItem("theme");
+
+if (theme === "light") {
+  document.body.classList.add("light-mode");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("editProfileBtn");
+
+  if (btn) {
+    btn.onclick = () => {
+      window.location.href = "setting.html";
+    };
+  }
+});
+
+
+//to upload username, name from profile to settings page
+
+const user = JSON.parse(localStorage.getItem("user")) || {};
+
+document.querySelector(".profile-name").textContent = user.name || "Player";
+document.querySelector(".profile-img").src = user.image || "default.png";
+document.querySelector(".bio").textContent = user.bio || "";
+
+
 document.addEventListener("DOMContentLoaded", () => {
 
   const highlightContainer = document.querySelector(".highlights");
