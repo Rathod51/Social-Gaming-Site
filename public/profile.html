@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
     <link rel="stylesheet" href="profile.css">
-    <link rel="stylesheet" href="profile1.css">
+    
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="story.css">
     <link rel="stylesheet" href="notifi.css">
@@ -65,35 +65,35 @@
   <div class="profile-container">
 
     <!-- HEADER -->
+    
     <div class="profile-header">
-      <div class="top-row">
 
-        <div class="rank">
-          <h2>Rank</h2>
-          <h3>#12</h3>
-        </div>
+  <!-- LEFT: PROFILE IMAGE -->
+      <div class="profile-left">
+        <img src="https://i.pravatar.cc/150" class="profile-img-large">
+      </div>
 
-        <div class="profile-center">
-          <div class="avatar-wrapper">
-            <img src="https://i.pravatar.cc/100" class="profile-img">
-            <span class="online-dot"></span>
-          </div>
+  <!-- RIGHT: USER INFO -->
+      <div class="profile-right">
 
-          <h2 class="name">Player</h2>
-          <p class="username">@username</p>
-          <p class="bio">Your bio here</p>
-          <p class="followers">120 Followers • 80 Following</p>
+    <!-- TOP ROW -->
+        
+          <h2 class="name"></h2>
+          <p class="username"></p>
+          <p class="bio"></p>
+        
+    <!-- STATS -->
+     <div class="profile-stats">
+        <span><b class="post-count">0</b> Posts</span>
+        <span><b>120</b> Followers</span>
+        <span><b>80</b> Following</span>
+      </div> 
 
-          <div class="actions">
-            <button class="primary" id="editProfileBtn">Edit Profile</button>
-            <button class="secondary">Settings</button>
-          </div>
-        </div>
-
-        <div class="points">
-          <h2>Total Points</h2>
-          <h3>2450</h3>
-        </div>
+    <!-- BUTTONS -->
+      <div class="profile-buttons">
+        <button id="editProfileBtn">Edit profile</button>
+        <button>Settings</button>
+      </div>
 
       </div>
     </div>
@@ -130,12 +130,14 @@
 
     <!-- SAVED -->
     <div class="content-section" id="saved">
-      <p style="text-align:center; opacity:0.6;">No saved posts yet</p>
+      <p>No saved posts yet</p>
     </div>
 
     <!-- ACHIEVEMENTS -->
     <div class="content-section" id="achievements">
       <div class="badges">
+        <div class="badge">Rank #12</div>
+        <div class="badge">⭐ 2450 Points</div>
         <div class="badge">🏆</div>
         <div class="badge">🎯</div>
         <div class="badge">🔥</div>

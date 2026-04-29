@@ -76,15 +76,18 @@
 }
 
 .modal-actions {
-    display:flex;
-    justify-content:space-between;
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .modal-actions button {
-    padding:8px 12px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
 }
 
 #saveHighlight {
@@ -97,32 +100,30 @@
     color:white;
 }
 
-/* POSTS SECTION */
-.posts-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;                /* ✅ spacing between posts */
-  margin-top: 10px;
+
+/* SAVE */
+#save {
+    background: #6a6aff;
+    color: white;
 }
 
-/* EACH POST */
-.post-item {
-  width: 100%;
-  aspect-ratio: 1 / 1;     /* perfect square */
-  overflow: hidden;
-  border-radius: 10px;     /* ✅ rounded corners */
-  background: #2f2f5f;     /* fallback color */
-  transition: transform 0.2s ease;
+#save:hover {
+    background: #7a7aff;
 }
 
-/* IMAGE */
-.post-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;       /* ✅ prevents stretching */
+/* CANCEL */
+#cancel {
+    background: transparent;
+    border: 1px solid #6a6aff;
+    color: white;
 }
 
-/* HOVER EFFECT (optional but nice) */
+#cancel:hover {
+    background: rgba(106,106,255,0.2);
+}
+
+
+/* HOVER EFFECT*/
 .post-item:hover {
   transform: scale(0.97);
 }
@@ -188,3 +189,6 @@
 .content-section.active {
   display: block;
 }
+
+
+

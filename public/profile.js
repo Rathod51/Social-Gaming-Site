@@ -9,22 +9,52 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("user");
     user = {};
   }
-
-  const nameEl = document.querySelector(".name");
-  const imgEl = document.querySelector(".profile-img");
+  const nameEl = document.querySelector(".name"); 
+  const usernameEl = document.querySelector(".username");
   const bioEl = document.querySelector(".bio");
+  const imgEl = document.querySelector(".profile-img-large");
+  
+  //FIXED USERNAME
 
-  if (nameEl) nameEl.textContent = user.name || "Player";
-  if (imgEl) imgEl.src = user.image || "https://i.pravatar.cc/100";
-  if (bioEl) bioEl.textContent = user.bio || "";
-
-  // EDIT PROFILE
-  const btn = document.getElementById("editProfileBtn");
-  if (btn) {
-    btn.onclick = () => {
-      window.location.href = "setting.html";
-    };
+  if (nameEl) {
+    nameEl.textContent = user.name || "Player";
   }
+  
+  if (usernameEl) {
+    usernameEl.textContent = "@" + (user.username || "username");
+  }
+  
+  if (bioEl) {
+    bioEl.textContent = user.bio || "";
+  }
+
+  if (imgEl) {
+    imgEl.src = user.image || "https://i.pravatar.cc/150";
+  }
+  
+  
+  //================ EDIT PROFILE =================
+  const btn = document.getElementById("editProfileBtn");
+    if (btn) {
+      btn.onclick = () => {
+        window.location.href = "settings.html";
+      };
+    }
+
+  // ================= POST COUNT =================
+  const postCountEl = document.querySelector(".post-count");
+
+  function getPosts() {
+    try {
+      return JSON.parse(localStorage.getItem("posts")) || [];
+    } catch {
+      localStorage.removeItem("posts");
+      return [];
+    }
+  }
+
+  const posts = getPosts();
+  if (postCountEl) postCountEl.textContent = posts.length;
 
 
   // ================= MENU SYSTEM =================
@@ -32,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuBtn = document.getElementById("menuBtn");
   const menuDropdown = document.getElementById("menuDropdown");
 
-  if (menuBtn) {
+  if (menuBtn  && menuDropdown) {
     menuBtn.onclick = () => {
       menuDropdown.classList.toggle("active");
     };
@@ -93,16 +123,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     highlights.forEach((h, index) => {
 
+      // REMOVE EMPTY HIGHLIGHTS
+      if (!h.stories || h.stories.length === 0) return;
+
       const div = document.createElement("div");
       div.className = "highlight-item";
 
-      const thumb = h.stories?.[0]?.image || "";
+      const thumb = h.stories[0]?.image || "";
 
       div.innerHTML = `
         <div class="circle">
           ${thumb ? `<img src="${thumb}" class="highlight-img">` : ""}
         </div>
-        <p>${h.title}</p>
       `;
 
       div.onclick = () => {

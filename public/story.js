@@ -14,18 +14,24 @@ function openStory(hIndex, sIndex, highlights, renderHighlights) {
   overlay.className = "story-overlay";
   document.body.style.overflow = "hidden";
 
-  let timer;
+  let timer = null;
   let isPaused = false;
+
+  // ---------- ADD VIEW ----------
+  const currentUser = "You";
+  if (!story.views) story.views = [];
+  if (!story.views.includes(currentUser)) {
+    story.views.push(currentUser);
+    localStorage.setItem("highlights", JSON.stringify(highlights));
+  }
 
   overlay.innerHTML = `
     <button class="story-close">✕</button>
 
     <div class="story-view">
 
-      <!-- PROGRESS -->
       <div class="story-progress"></div>
 
-      <!-- HEADER -->
       <div class="story-header">
 
         <img src="https://i.pravatar.cc/40" class="story-avatar">
@@ -36,7 +42,6 @@ function openStory(hIndex, sIndex, highlights, renderHighlights) {
         </div>
 
         <div class="story-controls">
-
           <button class="pause-btn">⏸</button>
 
           <div class="story-menu">
@@ -47,75 +52,82 @@ function openStory(hIndex, sIndex, highlights, renderHighlights) {
               <div class="menu-item cancel">Cancel</div>
             </div>
           </div>
-
         </div>
+
       </div>
 
       ${story.image ? `<img src="${story.image}" class="story-img-full">` : ""}
 
       <div class="story-overlay-text">${story.content}</div>
 
+      <div class="story-viewers">👁 ${story.views.length}</div>
+
     </div>
   `;
 
   document.body.appendChild(overlay);
 
-  const view = overlay.querySelector(".story-view");
-
-  // ---------- PROGRESS ----------
   const progressContainer = overlay.querySelector(".story-progress");
+
+  const bars = [];
 
   highlight.stories.forEach((_, i) => {
     const bar = document.createElement("div");
     bar.className = "progress-bar-fill";
 
     const fill = document.createElement("div");
-    fill.style.width = i < sIndex ? "100%" : "0%";      
+
+    if (i < sIndex) fill.style.width = "100%";
+    else fill.style.width = "0%";
 
     bar.appendChild(fill);
     progressContainer.appendChild(bar);
+
+    bars.push(fill);
   });
 
-  const bars = progressContainer.children;
+  function startProgress() {
+    const current = bars[sIndex];
 
-  function play() {
-    const current = bars[sIndex].firstChild;
+    current.style.transition = "none";
+    current.style.width = "0%";
 
+    setTimeout(() => {
       current.style.transition = "width 5s linear";
       current.style.width = "100%";
-      timer = setTimeout(next, 5000);
-    }
+    }, 50);
 
-    function pause() {
-      clearTimeout(timer);
-    }
+    timer = setTimeout(next, 5000);
+  }
 
-    function close() {
-      overlay.remove();
-      document.body.style.overflow = "auto";
-      document.removeEventListener("keydown", keyHandler);
-    }
+  function stopTimer() {
+    if (timer) clearTimeout(timer);
+  }
+
+  function close() {
+    stopTimer();   // 🔥 IMPORTANT FIX
+    overlay.remove();
+    document.body.style.overflow = "auto";
+    document.removeEventListener("keydown", keyHandler);
+  }
 
   function next() {
+    stopTimer();
+
     if (sIndex < highlight.stories.length - 1) {
       overlay.remove();
       openStory(hIndex, sIndex + 1, highlights, renderHighlights);
-    } else if (hIndex < highlights.length - 1) {
-      overlay.remove();
-      openStory(hIndex + 1, 0, highlights, renderHighlights);
     } else {
-      close();
+      close(); // ❌ STOP AUTO NEXT HIGHLIGHT
     }
   }
 
   function prev() {
+    stopTimer();
+
     if (sIndex > 0) {
       overlay.remove();
       openStory(hIndex, sIndex - 1, highlights, renderHighlights);
-    } else if (hIndex > 0) {
-      const prevH = highlights[hIndex - 1];
-      overlay.remove();
-      openStory(hIndex - 1, prevH.stories.length - 1, highlights, renderHighlights);
     }
   }
 
@@ -169,13 +181,40 @@ function openStory(hIndex, sIndex, highlights, renderHighlights) {
     if (!isPaused) {
       isPaused = true;
       pauseBtn.textContent = "▶";
-      pause();
+      stopTimer();
     } else {
       isPaused = false;
       pauseBtn.textContent = "⏸";
-      play();
+      startProgress();
     }
   };
 
-  play();
+  // ---------- VIEWERS LIST ----------
+  overlay.querySelector(".story-viewers").onclick = () => {
+
+    const modal = document.createElement("div");
+    modal.className = "modal-overlay";
+
+    modal.innerHTML = `
+      <div class="modal-card">
+        <h3>Viewers</h3>
+
+        ${
+          story.views.length
+            ? story.views.map(v => `<p>${v}</p>`).join("")
+            : "<p>No viewers</p>"
+        }
+
+        <button id="closeViewer">Close</button>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById("closeViewer").onclick = () => {
+      modal.remove();
+    };
+  };
+
+  startProgress();
 }
