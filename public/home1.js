@@ -1,9 +1,3 @@
-const theme = localStorage.getItem("theme");
-
-if (theme === "light") {
-  document.body.classList.add("light-mode");
-}
-
 const btn = document.querySelector(".notif-btn");
 const panel = document.getElementById("notifPanel");
 const overlay = document.getElementById("notifOverlay");

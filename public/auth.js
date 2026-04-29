@@ -1,12 +1,4 @@
 
-
-const theme = localStorage.getItem("theme");
-
-if (theme === "light") {
-  document.body.classList.add("light-mode");
-}
-
-
 // ...................... Auth Check ........................
 
 document.addEventListener("DOMContentLoaded", () => {

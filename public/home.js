@@ -1,12 +1,3 @@
-
-
-const theme = localStorage.getItem("theme");
-
-if (theme === "light") {
-  document.body.classList.add("light-mode");
-}
-
-
 //............unread chats(badge)...............
 
 let unreadCount = parseInt(localStorage.getItem("unreadCount")) || 0;
@@ -14,7 +5,7 @@ let unreadCount = parseInt(localStorage.getItem("unreadCount")) || 0;
 //...........show badge...................
 
 const chatBadge = document.getElementById("chatBadge");
-
+ 
 function updateBadge() {
   if (!chatBadge) return;
 

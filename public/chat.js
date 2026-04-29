@@ -1,11 +1,3 @@
-
-const theme = localStorage.getItem("theme");
-
-if (theme === "light") {
-  document.body.classList.add("light-mode");
-}
-
-
 // ================= CHAT STATE =================
 
 let chats = JSON.parse(localStorage.getItem("chats")) || {};

@@ -1,9 +1,3 @@
-const theme = localStorage.getItem("theme");
-
-if (theme === "light") {
-  document.body.classList.add("light-mode");
-}
-
 function formatTime(timestamp) {
   return new Date(timestamp).toLocaleTimeString([], {
     hour: "2-digit",
@@ -20,13 +14,41 @@ function openStory(hIndex, sIndex, highlights, renderHighlights) {
   overlay.className = "story-overlay";
   document.body.style.overflow = "hidden";
 
+  let timer;
+  let isPaused = false;
+
   overlay.innerHTML = `
+    <button class="story-close">✕</button>
+
     <div class="story-view">
 
+      <!-- PROGRESS -->
       <div class="story-progress"></div>
 
+      <!-- HEADER -->
       <div class="story-header">
-        <span>${highlight.title}</span>
+
+        <img src="https://i.pravatar.cc/40" class="story-avatar">
+
+        <div class="story-user">
+          <span class="story-username">You</span>
+          <span class="story-time">${formatTime(story.id)}</span>
+        </div>
+
+        <div class="story-controls">
+
+          <button class="pause-btn">⏸</button>
+
+          <div class="story-menu">
+            <button class="menu-btn">⋯</button>
+
+            <div class="menu-dropdown">
+              <div class="menu-item delete">Delete</div>
+              <div class="menu-item cancel">Cancel</div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
       ${story.image ? `<img src="${story.image}" class="story-img-full">` : ""}
@@ -38,93 +60,122 @@ function openStory(hIndex, sIndex, highlights, renderHighlights) {
 
   document.body.appendChild(overlay);
 
-  // ---------- PROGRESS BARS ----------
+  const view = overlay.querySelector(".story-view");
+
+  // ---------- PROGRESS ----------
   const progressContainer = overlay.querySelector(".story-progress");
 
   highlight.stories.forEach((_, i) => {
     const bar = document.createElement("div");
     bar.className = "progress-bar-fill";
-    bar.style.width = i < sIndex ? "100%" : "0%";
+
+    const fill = document.createElement("div");
+    fill.style.width = i < sIndex ? "100%" : "0%";      
+
+    bar.appendChild(fill);
     progressContainer.appendChild(bar);
   });
 
   const bars = progressContainer.children;
-  let timer;
 
   function play() {
-    const current = bars[sIndex];
-    current.style.transition = "width 5s linear";
-    current.style.width = "100%";
+    const current = bars[sIndex].firstChild;
 
-    timer = setTimeout(next, 5000);
-  }
+      current.style.transition = "width 5s linear";
+      current.style.width = "100%";
+      timer = setTimeout(next, 5000);
+    }
+
+    function pause() {
+      clearTimeout(timer);
+    }
+
+    function close() {
+      overlay.remove();
+      document.body.style.overflow = "auto";
+      document.removeEventListener("keydown", keyHandler);
+    }
 
   function next() {
-
-    // next story in same highlight
     if (sIndex < highlight.stories.length - 1) {
       overlay.remove();
       openStory(hIndex, sIndex + 1, highlights, renderHighlights);
-      return;
-    }
-
-    // next highlight
-    if (hIndex < highlights.length - 1) {
+    } else if (hIndex < highlights.length - 1) {
       overlay.remove();
       openStory(hIndex + 1, 0, highlights, renderHighlights);
-      return;
+    } else {
+      close();
     }
-
-    close();
   }
 
   function prev() {
-
     if (sIndex > 0) {
       overlay.remove();
       openStory(hIndex, sIndex - 1, highlights, renderHighlights);
-      return;
-    }
-
-    if (hIndex > 0) {
+    } else if (hIndex > 0) {
       const prevH = highlights[hIndex - 1];
       overlay.remove();
       openStory(hIndex - 1, prevH.stories.length - 1, highlights, renderHighlights);
     }
   }
 
-  function close() {
-    overlay.remove();
-    document.body.style.overflow = "auto";
-  }
-
-  // ---------- CLICK NAV ----------
+  // ---------- CLICK ----------
   overlay.onclick = (e) => {
+    if (e.target.closest(".story-menu") || e.target.closest(".pause-btn")) return;
 
     const x = e.clientX;
-
-    if (x < window.innerWidth / 2) {
-      prev();
-    } else {
-      next();
-    }
+    if (x < window.innerWidth / 2) prev();
+    else next();
   };
 
-  // ---------- SWIPE ----------
-  let startX = 0;
+  // ---------- KEYBOARD ----------
+  function keyHandler(e) {
+    if (e.key === "ArrowRight" || e.key === "ArrowUp") next();
+    if (e.key === "ArrowLeft" || e.key === "ArrowDown") prev();
+  }
 
-  overlay.addEventListener("touchstart", e => {
-    startX = e.touches[0].clientX;
-  });
+  document.addEventListener("keydown", keyHandler);
 
-  overlay.addEventListener("touchend", e => {
-    const diff = startX - e.changedTouches[0].clientX;
+  // ---------- CLOSE ----------
+  overlay.querySelector(".story-close").onclick = (e) => {
+    e.stopPropagation();
+    close();
+  };
 
-    if (Math.abs(diff) < 50) return;
+  // ---------- MENU ----------
+  const menuBtn = overlay.querySelector(".menu-btn");
+  const dropdown = overlay.querySelector(".menu-dropdown");
 
-    if (diff > 0) next();
-    else prev();
-  });
+  menuBtn.onclick = (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle("active");
+  };
+
+  dropdown.querySelector(".cancel").onclick = () => {
+    dropdown.classList.remove("active");
+  };
+
+  dropdown.querySelector(".delete").onclick = () => {
+    highlights[hIndex].stories.splice(sIndex, 1);
+    localStorage.setItem("highlights", JSON.stringify(highlights));
+    close();
+    renderHighlights();
+  };
+
+  // ---------- PAUSE ----------
+  const pauseBtn = overlay.querySelector(".pause-btn");
+
+  pauseBtn.onclick = () => {
+    if (!isPaused) {
+      isPaused = true;
+      pauseBtn.textContent = "▶";
+      pause();
+    } else {
+      isPaused = false;
+      pauseBtn.textContent = "⏸";
+      play();
+    }
+  };
 
   play();
 }

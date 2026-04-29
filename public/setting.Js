@@ -1,11 +1,3 @@
-
-const theme = localStorage.getItem("theme");
-
-if (theme === "light") {
-  document.body.classList.add("light-mode");
-}
-
-
 let user = JSON.parse(localStorage.getItem("user")) || {
   name: "Player",
   username: "@player",

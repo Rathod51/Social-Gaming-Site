@@ -8,102 +8,155 @@
     <link rel="stylesheet" href="profile1.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="story.css">
+    <link rel="stylesheet" href="notifi.css">
+
 
 </head>
 <body>
 
-<div class="profile-container">
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
 
-<!-- 🔷 HEADER -->
-  <div class="profile-header">
-    <div class="top-row">
+  <div class="top-left">
+    <h2 class="top-logo">🎮 GameHub</h2>
+  </div>
 
-<!-- RANK -->
-      <div class="rank">
-        <h2>Rank</h2>
-        <h3>#12</h3>
-      </div>
+  <button class="nav-btn" data-link="home.html">
+    <i class="fa-solid fa-house"></i>
+    <span>Home</span>
+  </button>
 
-<!-- CENTER -->
-      <div class="profile-center">
-        <div class="avatar-wrapper">
-          <img src="https://i.pravatar.cc/100" class="profile-img">
-          <span class="online-dot"></span>
+  <button class="nav-btn notif-btn">
+    <i class="fa-solid fa-bell"></i>
+    <span>Notifications</span>
+  </button>
+
+  <button class="nav-btn" data-link="game-setup.html">
+    <i class="fa-solid fa-gamepad"></i>
+    <span>Play</span>
+  </button>
+
+  <button class="nav-btn" data-link="invite.html">
+    <i class="fa-solid fa-user-plus"></i>
+    <span>Invite</span>
+  </button>
+
+  <button class="nav-btn" data-link="upload.html">
+    <i class="fa-solid fa-plus"></i>
+    <span>Upload</span>
+  </button>
+
+  <button class="nav-btn" data-link="profile.html">
+    <i class="fa-solid fa-user"></i>
+    <span>Profile</span>
+  </button>
+
+  <button class="nav-btn" data-link="settings.html">
+    <i class="fa-solid fa-gear"></i>
+    <span>Settings</span>
+  </button>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+<div class="main-content">
+
+  <div class="profile-container">
+
+    <!-- HEADER -->
+    <div class="profile-header">
+      <div class="top-row">
+
+        <div class="rank">
+          <h2>Rank</h2>
+          <h3>#12</h3>
         </div>
 
-        <h2 class="name">Twinkel Rathod</h2>
-        <p class="username">@twinkel</p>
-        <p class="bio">🎮 Passionate gamer | ♟️ Chess lover</p>
-        <p class="followers">120 Followers • 80 Following</p>
+        <div class="profile-center">
+          <div class="avatar-wrapper">
+            <img src="https://i.pravatar.cc/100" class="profile-img">
+            <span class="online-dot"></span>
+          </div>
 
-        <!-- ACTION BUTTONS -->
-        <div class="actions">
-          <button class="primary" id="editProfileBtn" >Edit Profile</button>
-          <button class="secondary">Settings</button>
+          <h2 class="name">Player</h2>
+          <p class="username">@username</p>
+          <p class="bio">Your bio here</p>
+          <p class="followers">120 Followers • 80 Following</p>
+
+          <div class="actions">
+            <button class="primary" id="editProfileBtn">Edit Profile</button>
+            <button class="secondary">Settings</button>
+          </div>
+        </div>
+
+        <div class="points">
+          <h2>Total Points</h2>
+          <h3>2450</h3>
         </div>
 
       </div>
+    </div>
 
-      <!-- POINTS -->
-      <div class="points">
-        <h2>Total Poinst</h2>
-        <h3>2450</h3>
+
+    <!-- HIGHLIGHTS -->
+    <div class="highlights"></div>
+
+
+    <!-- ================= MENU + SEARCH ================= -->
+    <div class="profile-filter">
+
+      <input type="text" id="searchInput" placeholder="Search posts...">
+
+      <div class="menu-wrapper">
+        <button id="menuBtn">☰</button>
+
+        <div id="menuDropdown" class="menu-dropdown">
+          <div class="menu-item" data-target="posts">Posts</div>
+          <div class="menu-item" data-target="saved">Saved Posts</div>
+          <div class="menu-item" data-target="achievements">Achievements</div>
+        </div>
       </div>
 
     </div>
 
 
-  </div>
+    <!-- ================= CONTENT ================= -->
 
-
-<!--- HIGHLIGHTS -->
-
-    <div class="highlights"> </div>
-
-
-<!--  ACHIEVEMENTS -->
-  <div class="section">
-    <h3>Achievements</h3>
-    <div class="badges">
-      <div class="badge">🏆</div>
-      <div class="badge">🎯</div>
-      <div class="badge">🔥</div>
+    <!-- POSTS -->
+    <div class="content-section active" id="posts">
+      <div class="posts-grid"></div>
     </div>
-  </div>
 
-
- <!--  REWARDS -->
-  <div class="section">
-    <h3>Rewards</h3>
-    <div class="rewards">
-      <div class="reward-card">Winning: 1200</div>
-      <div class="reward-card">Moves: 800</div>
-      <div class="reward-card">Bonus: 450</div>
+    <!-- SAVED -->
+    <div class="content-section" id="saved">
+      <p style="text-align:center; opacity:0.6;">No saved posts yet</p>
     </div>
-  </div>
 
-
-<!--  MATCH STATS -->
-  <div class="section">
-    <h3>Match Stats</h3>
-
-    <p>Total Matches: 50</p>
-    <p>Wins: 30 | Losses: 20</p>
-
-    <div class="progress-bar">
-      <div class="progress" style="width:60%"></div>
+    <!-- ACHIEVEMENTS -->
+    <div class="content-section" id="achievements">
+      <div class="badges">
+        <div class="badge">🏆</div>
+        <div class="badge">🎯</div>
+        <div class="badge">🔥</div>
+      </div>
     </div>
-    <p>Win Rate: 60%</p>
+
   </div>
 
+</div>
 
+
+<!-- NOTIFICATIONS -->
+<div id="notifOverlay" class="notif-overlay"></div>
+
+<div id="notifPanel" class="notif-panel">
+  <iframe src="notifi.html"></iframe>
 </div>
 
 <script src="profile.js" defer></script>
 <script src="story.js"></script>
-<script src="profile1.js"></script>
-
-
+<script src="app.js"></script>
     
 </body>
 </html>

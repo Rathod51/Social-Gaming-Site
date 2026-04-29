@@ -97,3 +97,94 @@
     color:white;
 }
 
+/* POSTS SECTION */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;                /* ✅ spacing between posts */
+  margin-top: 10px;
+}
+
+/* EACH POST */
+.post-item {
+  width: 100%;
+  aspect-ratio: 1 / 1;     /* perfect square */
+  overflow: hidden;
+  border-radius: 10px;     /* ✅ rounded corners */
+  background: #2f2f5f;     /* fallback color */
+  transition: transform 0.2s ease;
+}
+
+/* IMAGE */
+.post-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;       /* ✅ prevents stretching */
+}
+
+/* HOVER EFFECT (optional but nice) */
+.post-item:hover {
+  transform: scale(0.97);
+}
+
+
+.profile-filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+#searchInput {
+  width: 60%;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: #2f2f5f;
+  color: white;
+}
+
+.menu-wrapper {
+  position: relative;
+}
+
+#menuBtn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  background: #2f2f5f;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+}
+
+.menu-dropdown.active {
+  display: flex;
+}
+
+.menu-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: white;
+  color: black;
+}
+
+.content-section {
+  display: none;
+  margin-top: 15px;
+}
+
+.content-section.active {
+  display: block;
+}

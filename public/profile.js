@@ -1,36 +1,88 @@
-const theme = localStorage.getItem("theme");
-
-if (theme === "light") {
-  document.body.classList.add("light-mode");
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("editProfileBtn");
 
+  // ================= USER =================
+
+  let user = {};
+  try {
+    user = JSON.parse(localStorage.getItem("user")) || {};
+  } catch {
+    localStorage.removeItem("user");
+    user = {};
+  }
+
+  const nameEl = document.querySelector(".name");
+  const imgEl = document.querySelector(".profile-img");
+  const bioEl = document.querySelector(".bio");
+
+  if (nameEl) nameEl.textContent = user.name || "Player";
+  if (imgEl) imgEl.src = user.image || "https://i.pravatar.cc/100";
+  if (bioEl) bioEl.textContent = user.bio || "";
+
+  // EDIT PROFILE
+  const btn = document.getElementById("editProfileBtn");
   if (btn) {
     btn.onclick = () => {
       window.location.href = "setting.html";
     };
   }
-});
 
 
-//to upload username, name from profile to settings page
+  // ================= MENU SYSTEM =================
 
-const user = JSON.parse(localStorage.getItem("user")) || {};
+  const menuBtn = document.getElementById("menuBtn");
+  const menuDropdown = document.getElementById("menuDropdown");
 
-document.querySelector(".profile-name").textContent = user.name || "Player";
-document.querySelector(".profile-img").src = user.image || "default.png";
-document.querySelector(".bio").textContent = user.bio || "";
+  if (menuBtn) {
+    menuBtn.onclick = () => {
+      menuDropdown.classList.toggle("active");
+    };
+  }
+
+  document.querySelectorAll(".menu-item").forEach(item => {
+    item.onclick = () => {
+
+      document.querySelectorAll(".content-section")
+        .forEach(sec => sec.classList.remove("active"));
+
+      document.getElementById(item.dataset.target)
+        .classList.add("active");
+
+      menuDropdown.classList.remove("active");
+    };
+  });
 
 
-document.addEventListener("DOMContentLoaded", () => {
+  // ================= HIGHLIGHTS =================
 
   const highlightContainer = document.querySelector(".highlights");
 
-  let highlights = JSON.parse(localStorage.getItem("highlights")) || [];
+  let highlights = [];
+  try {
+    highlights = JSON.parse(localStorage.getItem("highlights")) || [];
+  } catch {
+    localStorage.removeItem("highlights");
+    highlights = [];
+  }
+
+  highlights = highlights.map(h => {
+    if (!h.stories) {
+      return {
+        title: h.title || "Untitled",
+        stories: [{
+          id: Date.now(),
+          content: h.content || "",
+          image: h.image || ""
+        }]
+      };
+    }
+    return h;
+  });
+
+  localStorage.setItem("highlights", JSON.stringify(highlights));
 
   function renderHighlights() {
+
+    if (!highlightContainer) return;
 
     highlightContainer.innerHTML = `
       <div class="highlight-item add-highlight" id="addHighlight">
@@ -40,10 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     highlights.forEach((h, index) => {
+
       const div = document.createElement("div");
       div.className = "highlight-item";
 
-      // show first story image as thumbnail
       const thumb = h.stories?.[0]?.image || "";
 
       div.innerHTML = `
@@ -60,8 +112,10 @@ document.addEventListener("DOMContentLoaded", () => {
       highlightContainer.appendChild(div);
     });
 
-    document.getElementById("addHighlight").onclick = openCreateModal;
+    const addBtn = document.getElementById("addHighlight");
+    if (addBtn) addBtn.onclick = openCreateModal;
   }
+
 
   function openCreateModal() {
 
@@ -137,4 +191,93 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   renderHighlights();
+
+
+  // ================= POSTS =================
+
+  const postContainer = document.querySelector(".posts-grid");
+
+  function renderPosts(filteredPosts = null) {
+
+    if (!postContainer) return;
+
+    let posts = [];
+    try {
+      posts = JSON.parse(localStorage.getItem("posts")) || [];
+    } catch {
+      localStorage.removeItem("posts");
+      posts = [];
+    }
+
+    const displayPosts = filteredPosts || posts;
+
+    postContainer.innerHTML = "";
+
+    displayPosts.forEach((post, index) => {
+
+      const div = document.createElement("div");
+      div.className = "post-item";
+
+      div.innerHTML = `
+        ${post.image ? `<img src="${post.image}">` : ""}
+      `;
+
+      div.onclick = () => openPost(index, displayPosts);
+
+      postContainer.appendChild(div);
+    });
+  }
+
+
+  function openPost(index, posts) {
+
+    const post = posts[index];
+
+    const overlay = document.createElement("div");
+    overlay.className = "story-overlay";
+
+    overlay.innerHTML = `
+      <div class="story-view">
+
+        <button class="story-close">✕</button>
+
+        ${post.image ? `<img src="${post.image}" class="story-img-full">` : ""}
+
+        <div class="story-overlay-text">
+          <p>${post.text || ""}</p>
+          <p>❤️ ${post.likes || 0}</p>
+        </div>
+
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    overlay.querySelector(".story-close").onclick = () => {
+      overlay.remove();
+    };
+  }
+
+  renderPosts();
+
+
+  // ================= SEARCH =================
+
+  const searchInput = document.getElementById("searchInput");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+
+      const value = searchInput.value.toLowerCase();
+
+      let posts = JSON.parse(localStorage.getItem("posts")) || [];
+
+      const filtered = posts.filter(p =>
+        p.text?.toLowerCase().includes(value)
+      );
+
+      renderPosts(filtered);
+    });
+  }
+
 });
