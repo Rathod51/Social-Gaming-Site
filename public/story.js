@@ -105,7 +105,7 @@ function openStory(hIndex, sIndex, highlights, renderHighlights) {
   }
 
   function close() {
-    stopTimer();   // 🔥 IMPORTANT FIX
+    stopTimer(); 
     overlay.remove();
     document.body.style.overflow = "auto";
     document.removeEventListener("keydown", keyHandler);
@@ -118,7 +118,7 @@ function openStory(hIndex, sIndex, highlights, renderHighlights) {
       overlay.remove();
       openStory(hIndex, sIndex + 1, highlights, renderHighlights);
     } else {
-      close(); // ❌ STOP AUTO NEXT HIGHLIGHT
+      close(); //STOP AUTO NEXT HIGHLIGHT
     }
   }
 
