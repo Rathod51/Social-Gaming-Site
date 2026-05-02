@@ -11,23 +11,39 @@
 <body>
     <div class="game-area">
 
-    <div class="top-controls">
-        <button id="quitBtn">❌</button>
+     <!-- TOP CONTROLS -->
+
+        <div class="top-controls">
+            <button id="quitBtn">❌</button>
+        </div>
+
+    
+    <!-- ROLE TEXT -->
+
+        <h2 id="roleText"></h2>
+
+    <!-- CHESS BOARD -->
+
+        <div id="board"></div>
+
+     <!-- SIDE PANEL -->
+
+        <div id="sidePanel">
+            <h3>Players</h3>
+            <ul id="playersList"></ul>
+
+            <h3>Audience</h3>
+            <ul id="audienceList"></ul>
+        </div>
+        
     </div>
-
-    <h2 id="roleText"></h2>
-
-    <div id="board" style="width:400px; margin:auto;"></div>
-
-</div>
+        
 
 
-
-
-
+<script src="lib/jquery.js"></script>
+<script>window.$ = window.jQuery;</script>
 <script src="/socket.io/socket.io.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chess.js@1.0.0/chess.min.js"></script>
-<!-- <script src="lib/chess.js"></script> -->
+<script src="lib/chess.js"></script> 
 <script src="lib/chessboard.js"></script>
 <script src="chess.js"></script>
 

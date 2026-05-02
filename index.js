@@ -9,7 +9,7 @@ const io = require("socket.io")(http);
 let port = 8080;
 
 // =======================
-// USER STORAGE
+// USER STORAGE (TEMP)
 // =======================
 const users = [];
 
@@ -20,14 +20,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-
 // =======================
 // SIGNUP
 // =======================
 app.post("/signup", async (req, res) => {
     const { username, email, password } = req.body;
 
-    const existingUser = users.find(user => user.email === email);
+    const existingUser = users.find(u => u.email === email);
     if (existingUser) return res.send("User already exists!");
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -37,14 +36,14 @@ app.post("/signup", async (req, res) => {
     res.redirect("/home.html");
 });
 
-
 // =======================
 // LOGIN
 // =======================
+
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
-    const user = users.find(user => user.email === email);
+    const user = users.find(u => u.email === email);
     if (!user) return res.send("User not found!");
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -54,31 +53,39 @@ app.post("/login", async (req, res) => {
 });
 
 
+
+
 // =======================
-// ROOM SYSTEM
+// ROOM STORAGE
 // =======================
 const rooms = {};
-
-// structure:
-// rooms = {
-//   roomId: {
-//     players: [{ id, role }],
-//     audience: [{ id }],
-//     gameState: null
-//   }
-// }
-
+/*
+rooms = {
+  roomId: {
+    players: [{ id, role }], // role: white/black
+    audience: [{ id }],
+    gameState: fen
+  }
+}
+*/
 
 // =======================
 // SOCKET.IO
 // =======================
+
+
 io.on("connection", (socket) => {
 
     console.log("User connected:", socket.id);
 
-    // =======================
-    // JOIN ROOM
-    // =======================
+    // assign temporary username
+    socket.username = "User_" + socket.id.slice(0, 4);
+
+// =======================
+// JOIN ROOM
+// =======================
+
+
     socket.on("joinRoom", ({ roomId, role }) => {
 
         socket.join(roomId);
@@ -92,69 +99,120 @@ io.on("connection", (socket) => {
             };
         }
 
+        const room = rooms[roomId];
+
+//remove duplicate entries
+
+        room.players = room.players.filter(p => p.id !== socket.id);
+        room.audience = room.audience.filter(a => a.id !== socket.id);
+
         let assignedRole = role;
 
         if (role === "player") {
-            if (rooms[roomId].players.length < 2) {
-                assignedRole = rooms[roomId].players.length === 0 ? "white" : "black";
 
-                rooms[roomId].players.push({
+            if (room.players.length < 2) {
+                assignedRole = room.players.length === 0 ? "white" : "black";
+
+                room.players.push({
                     id: socket.id,
-                    role: assignedRole
-                });
+                    role: assignedRole,
+                    username: socket.username
 
+                });
             } else {
                 assignedRole = "audience";
-                rooms[roomId].audience.push({ id: socket.id });
+
+                room.audience.push({ 
+                    id: socket.id,
+                    username: socket.username
+                 });
             }
         } else {
-            rooms[roomId].audience.push({ id: socket.id });
+            assignedRole = "audience";
+            room.audience.push({ 
+                id: socket.id,
+                username: socket.username
+             });
         }
 
-        // send assigned role back
+    // send assigned role back
+
         socket.emit("roleAssigned", assignedRole);
 
-        console.log("Room:", roomId, rooms[roomId]);
+     // send room update
 
-        // send existing game state
-        if (rooms[roomId].gameState) {
-            socket.emit("init", rooms[roomId].gameState);
+        io.to(roomId).emit("roomUpdate", {
+            players: room.players,
+            audience: room.audience
+        });
+
+        console.log("Room:", roomId, room);
+
+    // send current board state
+
+        if (room.gameState) {
+            socket.emit("init", room.gameState);
         }
     });
 
+// =======================
+// HANDLE MOVE
+// =======================
 
-    // =======================
-    // HANDLE MOVE
-    // =======================
+
     socket.on("move", ({ roomId, move, fen }) => {
 
-        if (!rooms[roomId]) return;
+        const room = rooms[roomId];
+        if (!room) return;
 
-        rooms[roomId].gameState = fen;
+        const player = room.players.find(p => p.id === socket.id);
+        if (!player) return; // audience can't move
 
+    // check turn
+        const turn = fen.split(" ")[1]; // 'w' or 'b'
+
+        const validTurn =
+            (player.role === "white" && turn === "b") ||
+            (player.role === "black" && turn === "w");
+
+        if (!validTurn) {
+            console.log("Invalid turn attempt:", socket.id);
+            return;
+        }
+
+    // save game state
+        room.gameState = fen;
+
+    // broadcast move
         io.to(roomId).emit("move", move);
     });
 
+// =======================
+// DISCONNECT
+// =======================
 
-    // =======================
-    // DISCONNECT
-    // =======================
+
     socket.on("disconnect", () => {
 
         const roomId = socket.roomId;
         if (!roomId || !rooms[roomId]) return;
 
-        rooms[roomId].players =
-            rooms[roomId].players.filter(p => p.id !== socket.id);
+        const room = rooms[roomId];
 
-        rooms[roomId].audience =
-            rooms[roomId].audience.filter(a => a.id !== socket.id);
+        room.players = room.players.filter(p => p.id !== socket.id);
+        room.audience = room.audience.filter(a => a.id !== socket.id);
 
-        // 🔥 delete empty room
-        if (
-            rooms[roomId].players.length === 0 &&
-            rooms[roomId].audience.length === 0
-        ) {
+ // send update BEFORE deletion
+
+        io.to(roomId).emit("roomUpdate", {
+            players: room.players,
+            audience: room.audience
+        });
+
+
+    // delete empty room
+
+        if (room.players.length === 0 && room.audience.length === 0) {
             delete rooms[roomId];
             console.log("Deleted empty room:", roomId);
         }
@@ -162,9 +220,15 @@ io.on("connection", (socket) => {
 });
 
 
+
+
+
+
 // =======================
 // START SERVER
 // =======================
+
+
 http.listen(port, () => {
     console.log("Server running on http://localhost:" + port);
 });

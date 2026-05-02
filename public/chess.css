@@ -8,10 +8,49 @@ body{
 
 .game-area{
     margin-top:50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .top-controls{
     position:absolute;
     top:20px;
     right:20px;
+}
+
+#board {
+    width: 400px;
+    margin: 20px auto;
+}
+
+#sidePanel {
+    position: absolute;
+    right: 20px;
+    top: 80px;
+    width: 200px;
+    background: #2f2f5f;
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+}
+
+#sidePanel h3 {
+    margin-bottom: 5px;
+    font-size: 16px;
+    border-bottom: 1px solid #555;
+}
+
+#sidePanel ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 15px;
+}
+
+#sidePanel li {
+    padding: 5px;
+    background: #1e1e2f;
+    margin: 5px 0;
+    border-radius: 5px;
+    font-size: 14px;
 }

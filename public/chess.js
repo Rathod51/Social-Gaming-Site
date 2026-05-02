@@ -1,117 +1,191 @@
 // =======================
-// SOCKET CONNECTION
+// SOCKET
 // =======================
-const socket = io();
+
+
+    const socket = io();
 
 // =======================
 // GET PARAMS
 // =======================
-const params = new URLSearchParams(window.location.search);
-let role = params.get("role");
-let roomId = params.get("roomId");
 
-// 🔥 create room if not exists
-if (!roomId) {
-    roomId = Math.random().toString(36).substring(2, 8);
-    window.location.href = `chess.html?role=${role}&roomId=${roomId}`;
-}
+
+    const params = new URLSearchParams(window.location.search);
+    let role = params.get("role") || "audience";
+    let roomId = params.get("roomId");
 
 // =======================
-// JOIN ROOM
+// SAFE ROOM CREATION
 // =======================
-socket.emit("joinRoom", {
-    roomId: roomId,
-    role: role
-});
 
-// =======================
-// HANDLE ROLE ASSIGNMENT
-// =======================
-socket.on("roleAssigned", (assignedRole) => {
-    console.log("Assigned role:", assignedRole);
 
-    if (assignedRole === "audience") {
-        role = "audience";
-    } else {
-        role = "player";
+    if (!roomId) {
+        const newRoom = Math.random().toString(36).substring(2, 8);
+        window.location.href = `chess.html?role=${role}&roomId=${newRoom}`;
     }
 
-    updateUI();
-});
-
 // =======================
-// UI UPDATE
+// START AFTER LOAD
 // =======================
-const roleText = document.getElementById("roleText");
 
-function updateUI() {
-    if (roleText) {
-        roleText.innerText =
-            role === "audience"
-                ? "Watching Game"
-                : "Playing Game";
-    }
-}
+window.onload = function () {
 
-// =======================
-// CHESS INIT
-// =======================
-const chess = new Chess();
+    const roleText = document.getElementById("roleText");
+    const quitBtn = document.getElementById("quitBtn");
 
-const board = Chessboard("board", {
-    draggable: role === "player",
-    position: "start",
-    onDrop: onDrop
-});
+    const chess = new Chess();
 
-// =======================
-// PLAYER MOVE
-// =======================
-function onDrop(source, target) {
+    let playerColor = null; // "white" or "black"
 
-    if (role !== "player") return "snapback";
-
-    const move = chess.move({
-        from: source,
-        to: target,
-        promotion: "q"
+    let board = Chessboard("board", {
+        draggable: false, // will enable after role assign
+        position: "start",
+        pieceTheme: "lib/img/chesspieces/wikipedia/{piece}.png",
+        onDrop: onDrop
     });
 
-    if (move === null) return "snapback";
+    // =======================
+    // JOIN ROOM
+    // =======================
 
-    // 🔥 send move with roomId + fen
-    socket.emit("move", {
-        roomId: roomId,
-        move: move,
-        fen: chess.fen()
+        socket.emit("joinRoom", { roomId, role });
+
+    // =======================
+    // ROLE ASSIGNMENT
+    // =======================
+
+
+        socket.on("roleAssigned", (assignedRole) => {
+        console.log("Assigned:", assignedRole);
+
+            if (assignedRole === "white" || assignedRole === "black") {
+
+                role = "player";
+                playerColor = assignedRole;
+
+                // 🔥 RECREATE BOARD (important)
+                Chessboard("board", null); // destroy old board
+
+                board = Chessboard("board", {
+                    draggable: true,
+                    position: chess.fen(),
+                    orientation: playerColor,
+                    pieceTheme: "lib/img/chesspieces/wikipedia/{piece}.png",
+                    onDrop: onDrop
+                });
+
+            } else {
+
+                role = "audience";
+
+                Chessboard("board", null);
+
+                board = Chessboard("board", {
+                    draggable: false,
+                    position: chess.fen(),
+                    pieceTheme: "lib/img/chesspieces/wikipedia/{piece}.png"
+                });
+            }
+
+    // UI update
+
+        if (roleText) {
+            roleText.innerText =
+                playerColor === "white" ? "You are WHITE" :
+                playerColor === "black" ? "You are BLACK" :
+                "Watching Game";
+        }
     });
 
-    console.log("You played:", move);
-}
+    // =======================
+    // MOVE LOGIC
+    // =======================
 
-// =======================
-// RECEIVE MOVE FROM SERVER
-// =======================
-socket.on("move", (move) => {
-    chess.move(move);
-    board.position(chess.fen());
-});
 
-// =======================
-// INITIAL SYNC
-// =======================
-socket.on("init", (fen) => {
-    chess.load(fen);
-    board.position(fen);
-});
+        function onDrop(source, target) {
 
-// =======================
-// QUIT BUTTON
-// =======================
-const quitBtn = document.getElementById("quitBtn");
+            if (role !== "player") return "snapback";
 
-if (quitBtn) {
-    quitBtn.onclick = () => {
-        window.location.href = "home.html";
-    };
-}
+            // check turn
+            const turn = chess.turn(); // "w" or "b"
+
+            if (
+                (playerColor === "white" && turn !== "w") ||
+                (playerColor === "black" && turn !== "b")
+            ) {
+                return "snapback";
+            }
+
+            const move = chess.move({
+                from: source,
+                to: target,
+                promotion: "q"
+            });
+
+            if (move === null) return "snapback";
+
+            // send move to server
+            socket.emit("move", {
+                roomId,
+                move,
+                fen: chess.fen()
+            });
+        }
+
+    // =======================
+    // RECEIVE MOVE
+    // =======================
+
+
+        socket.on("move", (move) => {
+            chess.move(move);
+            board.position(chess.fen());
+        });
+
+    // =======================
+    // INITIAL SYNC
+    // =======================
+
+
+        socket.on("init", (fen) => {
+            chess.load(fen);
+            board.position(fen);
+        });
+
+    // =======================
+    // QUIT BUTTON
+    // =======================
+
+
+        if (quitBtn) {
+            quitBtn.onclick = () => {
+                window.location.href = "home.html";
+            };
+        }
+
+        socket.on("roomUpdate", (data) => {
+
+            const playersList = document.getElementById("playersList");
+            const audienceList = document.getElementById("audienceList");
+
+            if (playersList) {
+                playersList.innerHTML = "";
+                data.players.forEach(p => {
+                    const li = document.createElement("li");
+                    li.innerText = p.role === "white" ? "♔ WHITE" : "♚ BLACK";
+                    playersList.appendChild(li);
+                });
+            }
+
+            if (audienceList) {
+                audienceList.innerHTML = "";
+                data.audience.forEach(() => {
+                    const li = document.createElement("li");
+                    li.innerText = "👀 Viewer";
+                    audienceList.appendChild(li);
+                });
+            }
+        });
+
+};
+
