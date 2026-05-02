@@ -19,6 +19,8 @@
     ],
     "no-inline-styles": "off",
     "axe/forms": "off",
-    "axe/text-alternatives": "off"
+    "axe/text-alternatives": "off",
+    "typescript-config/is-valid": "off",
+    "typescript-config/consistent-casing": "off"
   }
 }

@@ -1,0 +1,17 @@
+body{
+    margin:0;
+    background:#1e1e2f;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+.game-area{
+    margin-top:50px;
+}
+
+.top-controls{
+    position:absolute;
+    top:20px;
+    right:20px;
+}
