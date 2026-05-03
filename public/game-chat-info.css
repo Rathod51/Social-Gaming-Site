@@ -1,0 +1,134 @@
+/*======================= 
+    CHAT SYSTEM
+=======================*/
+
+    #chatToggleBtn {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        background: #4cafef;
+        border: none;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #chatToggleBtn i {
+        font-size: 26px; /* 🔥 BIG icon */
+        color: white;
+    }
+
+    #chatToggleBtn:hover {
+        transform: scale(1.1);
+        background: #3ea6e0;
+
+    }
+
+    #chatBox {
+        position: fixed;
+        z-index: 50;
+        left: 20px;
+        bottom: 80px;
+        width: 400px;
+        height: 500px;
+        background: #2f2f5f;
+        border-radius: 10px;
+        padding: 10px;
+        display: none;
+        flex-direction: column;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    #messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .message {
+        margin: 8px 0;
+        padding: 8px;
+        max-width: 75%;
+        border-radius: 8px;
+        background: #1e1e2f;
+        text-align: left;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .message.me {
+    align-self: flex-end;
+    background: #2a2a3f;
+    color: white;
+    border-bottom-right-radius: 4px;
+    }
+
+    .message.other {
+        align-self: flex-start;
+        background: #2a2a3f;
+        color: white;
+        border-bottom-left-radius: 4px;
+    }
+
+    .msgHeader {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        margin-bottom: 3px;
+    }
+
+    .msgText {
+        margin-top: 3px;
+        color: white;
+        font-size: 14px;
+    }
+
+    .playerMsg {
+        background: #4cafef;
+        color: white;
+        text-align: right;
+    }
+
+    .audienceMsg {
+        background: #444;
+        color: #ddd;
+        text-align: left;
+    }
+
+    #typingIndicator {
+        font-size: 12px;
+        color: #aaa;
+        height: 16px;
+        margin: 4px;
+    }
+
+    #chatInputArea {
+        display: flex;
+        margin-top: 5px;
+    }
+
+    #chatInput {
+        flex: 1;
+        padding: 6px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    #sendBtn {
+        margin-left: 5px;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }

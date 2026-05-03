@@ -7,14 +7,26 @@
     <link rel="stylesheet" href="chess.css">
     <link rel="stylesheet" href="lib/chessboard.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="game-chat-info.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 <body>
+
     <div class="game-area">
 
-     <!-- TOP CONTROLS -->
+    <!-- TOP CONTROLS -->
 
         <div class="top-controls">
-            <button id="quitBtn">❌</button>
+           
+            <button id="infoBtn" class="top-ctrlBtn">
+                <i class="fa-solid fa-circle-info"></i>
+            </button>
+
+            <button id="quitBtn" class="top-ctrlBtn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+
         </div>
 
     
@@ -25,20 +37,85 @@
     <!-- CHESS BOARD -->
 
         <div id="board"></div>
+        <div id="scoreBoard">
+           <div>
+                <small>WHITE</small>
+                <h3 id="whiteScore">0</h3>
+            </div>
 
-     <!-- SIDE PANEL -->
-
-        <div id="sidePanel">
-            <h3>Players</h3>
-            <ul id="playersList"></ul>
-
-            <h3>Audience</h3>
-            <ul id="audienceList"></ul>
+            <div>
+                <small>BLACK</small>
+                <h3 id="blackScore">0</h3>
+            </div>
         </div>
         
-    </div>
-        
 
+    <!-- CHAT BOX -->
+
+        <button id="chatToggleBtn">
+            <i class="fa-solid fa-comments"></i>
+        </button>
+
+        <div id="chatBox" class="hidden">
+            <div id="messages"></div>
+            <div id="typingIndicator"></div>
+
+            <div id="chatInputArea">
+                <input type="text" id="chatInput" placeholder="Type a message..." />
+                <button id="sendBtn">Send</button>
+            </div>
+        </div>
+
+
+    <!-- SIDE PANEL -->
+
+        <div id="infoPanel">
+            <h3>Players</h3>
+            <div id="playersInfo"></div>
+
+            <h3>Audience</h3>
+            <div id="audienceInfo"></div>
+        </div>
+
+    
+    </div>
+
+<!-- QUIT MODAL -->
+
+    <div id="quitModal" class="modal hidden">
+        <div class="modalContent">
+            <p>Are you sure you want to quit the game?</p>
+            <button id="confirmQuit">Yes</button>
+            <button id="cancelQuit">No</button>
+        </div>
+    </div>
+
+
+<!-- JOIN MODAL -->
+ 
+    <div id="joinModal" class="modal hidden">
+        <div class="modalContent">
+            <h3>Player Left!</h3>
+            <p id="joinText"></p>
+
+            <div id="timerBar"></div>
+
+            <button id="joinBtn">Join</button>
+            <button id="cancelJoin">Cancel</button>
+        </div>
+    </div>    
+
+
+<!--  -->
+    <div id="resultModal" class="modal hidden">
+        <div class="modalContent">
+            <h2 id="resultText"></h2>
+            <button id="newGameBtn">New Game</button>
+        </div>
+    </div>
+
+
+   
 
 <script src="lib/jquery.js"></script>
 <script>window.$ = window.jQuery;</script>
@@ -46,6 +123,7 @@
 <script src="lib/chess.js"></script> 
 <script src="lib/chessboard.js"></script>
 <script src="chess.js"></script>
+
 
 </body>
 </html>
