@@ -3,7 +3,7 @@
 // =======================
 
 
-    export function initChat({ socket, roomId, getUserColor }) {
+export function initChat({ socket, roomId, getUserColor }) {
 
         const chatBox = document.getElementById("chatBox");
         const chatToggleBtn = document.getElementById("chatToggleBtn");

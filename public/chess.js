@@ -1,17 +1,23 @@
-// =======================
-// IMPORTS (MUST BE AT TOP)
-// =======================
-
-    import { initInfoPanel } from "./game-info.js";
-    import { initChat } from "./game-chat.js";
-    import { initPlayerJoin } from "./game-playerJoin.js";
-    import { initSocketHandlers } from "./socket.js";
+ import { initInfoPanel} from "./game-info.js";
+ import { initChat } from "./game-chat.js";
+ import { initPlayerJoin } from "./game-playerJoin.js";
+ import { initSocketHandlers } from "./socket.js";
 
 // =======================
 // SOCKET
 // =======================
 
     const socket = io();
+
+// =======================
+// USER ID (FIX RECONNECT)
+// =======================
+    let userId = localStorage.getItem("userId");
+
+    if (!userId) {
+        userId = "user_" + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem("userId", userId);
+    }
 
 // =======================
 // GET PARAMS
@@ -48,31 +54,39 @@
 // START AFTER LOAD
 // =======================
 
-window.onload = function () {
+    window.onload = function () {
 
-    const roleText = document.getElementById("roleText");
-   
+        const roleText = document.getElementById("roleText");
+    
 
-    const chess = new Chess();
-    let playerColor = null; // "white" or "black"
+        const chess = new Chess();
+        window.chess = chess;
 
-    let board = Chessboard("board", {
-        draggable: false, // will enable after role assign
-        position: "start",
-        pieceTheme: "lib/img/chesspieces/wikipedia/{piece}.png",
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd
-    });
+        let playerColor = null; // "white" or "black"
+        let board = null;
+
+        function createBoard(draggable, orientation = "white") {
+                Chessboard("board", null);
+
+            board = Chessboard("board", {
+                draggable: false, // will enable after role assign
+                position: "start",
+                pieceTheme:  "lib/img/chesspieces/wikipedia/{piece}.png",
+                onDrop: onDrop,
+                onSnapEnd: onSnapEnd
+            });
+
+        }
+        createBoard(false);
 
     // =======================
     // JOIN ROOM
     // =======================
 
-        socket.emit("joinRoom", { roomId, role });
-
+        socket.emit("joinRoom", { roomId, role, userId});
+    
         socket.on("setUsername", (name) => {
             socket.username = name;
-
         });
 
     // =======================
@@ -82,22 +96,19 @@ window.onload = function () {
         initChat({ socket, roomId, getUserColor });
         initInfoPanel();
         initPlayerJoin(socket, roomId, role);
-        initSocketHandlers({ socket, chess, getBoard: () => board,
-            roomId, updateScore, checkGameEnd, setPlayerRole });
+
 
     // =======================
     // ROLE ASSIGNMENT
     // =======================
 
-        socket.on("roleAssigned", (assignedRole) => {
-        
+        function setPlayerRole(assignedRole) {
+
+
             if (assignedRole === "white" || assignedRole === "black") {
 
-                role = "player";
+                window.role = "player";
                 playerColor = assignedRole;
-
-            // RECREATE BOARD (important)
-                Chessboard("board", null); // destroy old board
 
                 board = Chessboard("board", {
                     draggable: true,
@@ -110,37 +121,39 @@ window.onload = function () {
 
             } else {
 
-                role = "audience";
-
-                Chessboard("board", null);
+                window.role = "audience";
 
                 board = Chessboard("board", {
                     draggable: false,
                     position: chess.fen(),
                     pieceTheme: "lib/img/chesspieces/wikipedia/{piece}.png",
+                    onDrop: onDrop,
                     onSnapEnd: onSnapEnd
                 });
             }
-
-        // UI update
-
+                    
             if (roleText) {
                 roleText.innerText =
                     playerColor === "white" ? "You are WHITE" :
                     playerColor === "black" ? "You are BLACK" :
                     "Watching Game";
             }
-        });
+        }
 
+
+        initSocketHandlers({ socket, chess, getBoard: () => board,
+            roomId, updateScore, checkGameEnd, setPlayerRole });
+            
     // =======================
     // MOVE LOGIC
-    // =======================
+    // ========================
 
         function onDrop(source, target) {
 
-            if (chess.isGameOver()) return "snapback";
+            
             if (role !== "player") return "snapback";
-
+            if (!playerColor) return "snapback";
+            if (chess.game_over()) return "snapback";
         // check turn
             const turn = chess.turn(); // "w" or "b"
 
@@ -158,11 +171,12 @@ window.onload = function () {
             });
         
         // INVALID MOVE SNAP BACK
-            if (move === null) return "snapback";
+            if (!move) return "snapback";
+             board.position(chess.fen());
 
-            setTimeout(() => {
-                    board.position(chess.fen());
-            }, 0)
+            // setTimeout(() => {
+            //         board.position(chess.fen());
+            // }, 0)
 
         // send move to server
             socket.emit("move", {
@@ -171,6 +185,10 @@ window.onload = function () {
                 fen: chess.fen()
             });
 
+            // const currentTurn = chess.turn();
+            // socket.emit("updateTurn", { roomId, turn: currentTurn });
+
+            updateMoveHistory();
             updateScore();
             checkGameEnd();
            
@@ -192,7 +210,7 @@ window.onload = function () {
 
             let w = 0, b = 0;
 
-            pieces.forEach(p => {
+            chess.board().flat().forEach(p => {
                 if (!p) return;
 
                 const val = { p:1, n:3, b:3, r:5, q:9, k:0 }[p.type];
@@ -201,8 +219,8 @@ window.onload = function () {
                 else b += val;
             });
 
-            whiteScore.innerText = w;
-            blackScore.innerText = b;
+            if (whiteScore) whiteScore.innerText = w;
+            if (blackScore) blackScore.innerText = b;
         }
 
     // =======================
@@ -214,88 +232,72 @@ window.onload = function () {
             const resultModal = document.getElementById("resultModal");
             const resultText = document.getElementById("resultText");
 
-            if (chess.isCheckmate()) {
-
+            if (chess.in_checkmate()) {
                 const winner = chess.turn() === "w" ? "Black" : "White";
 
                 resultText.innerText = `${winner} wins by Checkmate!`;
                 resultModal.classList.remove("hidden");
+                return;
+            } 
+            
+        // draw
 
-            } else if (chess.isDraw()) {
+            if (chess.in_draw() || chess.in_stalemate() || chess.in_threefold_repetition() || chess.insufficient_material()) {
 
-                resultText.innerText = "Game Draw!";
+               resultText.innerText = "Game Draw";
                 resultModal.classList.remove("hidden");
             }
         }
-
-    // =======================
-    // RECEIVE MOVE
-    // =======================
-
-        socket.on("move", (move) => {
-            chess.move(move);
-            board.position(chess.fen());
-
-            updateScore();
-            checkGameEnd();
-        });
-
-    // =======================
-    // INITIAL  STATE SYNC
-    // =======================
-
-        socket.on("init", (fen) => {
-            chess.load(fen);
-            board.position(fen);
-        });
-
-    // =======================
-    // PLAYER JOIN MODAL SLOT OPEN 
-    // =======================
-
-        socket.on("playerSlotOpen", ({ role: openRole, time }) => {
-
-            if (role !== "audience") return;
-
-            joinModal.classList.remove("hidden");
-            joinText.innerText = `Join as ${openRole.toUpperCase()}?`;
-
-            timerBar.style.width = "100%";
-
-            setTimeout(() => {
-                timerBar.style.width = "0%";
-            }, 100);
-
-            let timer = setTimeout(() => {
-                joinModal.classList.add("hidden");
-            }, time * 1000);
-
-            joinBtn.onclick = () => {
-                socket.emit("joinAsPlayer", { roomId, role: openRole });
-                joinModal.classList.add("hidden");
-                clearTimeout(timer);
-            };
-
-            cancelJoin.onclick = () => {
-                joinModal.classList.add("hidden");
-                clearTimeout(timer);
-            };
-        });
-
-
-    // =======================
-    // QUIT BUTTON(MODAL)
-    // =======================
-        // quitBtn.onclick = () => {
-        //     quitModal.style.display = "flex";
-        // };
-        // cancelQuitBtn.onclick = () => {
-        //     quitModal.style.display = "none";
-        // };
-        // confirmQuitBtn.onclick = () => {
-        //     window.location.href = "home.html";
-        // };
     
+    // =======================
+    //  MOVE HISTORY
+    // ========================
+
+        window.updateMoveHistory = function() {
+
+            const history = chess.history(); // ["e4", "e5", "Nf3", ...]
+            const container = document.getElementById("moveHistory");
+
+            if (!container) return;
+
+            container.innerHTML = "";
+
+            for (let i = 0; i < history.length; i += 2) {
+
+                const moveNumber = Math.floor(i / 2) + 1;
+                const whiteMove = history[i] || "";
+                const blackMove = history[i + 1] || "";
+                const row = document.createElement("div");
+                row.className = "moveRow";
+
+                row.innerHTML = `
+                    <span class="moveNumber">${moveNumber}.</span>
+                    <span class="moveWhite">${whiteMove}</span>
+                    <span class="moveBlack">${blackMove}</span>
+                `;
+
+                container.appendChild(row);
+            }
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+         // =======================
+        // HISTORY TOGGLE
+        // =======================
+
+
+        const historyBtn = document.getElementById("historyToggleBtn");
+        const historyBox = document.getElementById("historyBox");
+
+        if (historyBtn && historyBox) {
+            historyBtn.onclick = () => {
+                historyBox.classList.toggle("hidden");
+            };
+        }
+
+
+
 
     // =======================
     //  NEW GAME

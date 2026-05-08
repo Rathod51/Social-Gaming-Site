@@ -1,10 +1,10 @@
 // =======================
-// PLAYER JOIN
+// PLAYER JOIN MODAL SLOT OPEN 
 // =======================
 
 
 
-export function initPlayerJoin(socket, roomId, role) {
+ export function initPlayerJoin(socket, roomId, role) {
 
     const joinModal = document.getElementById("joinModal");
     const joinBtn = document.getElementById("joinBtn");
@@ -19,9 +19,11 @@ export function initPlayerJoin(socket, roomId, role) {
         joinModal.classList.remove("hidden");
         joinText.innerText = `Join as ${openRole.toUpperCase()}?`;
 
+        timerBar.style.transition = "none";
         timerBar.style.width = "100%";
-
+        
         setTimeout(() => {
+            timerBar.style.transition =`width ${time}s linear`;
             timerBar.style.width = "0%";
         }, 100);
 

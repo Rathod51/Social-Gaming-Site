@@ -1,4 +1,3 @@
-
 export function initInfoPanel() {
 
         const infoBtn = document.getElementById("infoBtn");
@@ -9,45 +8,6 @@ export function initInfoPanel() {
         const confirmQuitBtn = document.getElementById("confirmQuit");
 
 
-
-
-// =======================
-// USER CARD UI
-// =======================
-
-
-    function createUserCard(user) {
-
-        const div = document.createElement("div");
-        div.className = "userCard";
-
-    // role dot
-
-        let roleDot = "";
-            if (user.role === "white") {
-                roleDot = `<span class="dot white"></span>`;
-            } else if (user.role === "black") {
-                roleDot = `<span class="dot black"></span>`;
-            }
-
-        div.innerHTML = `
-            <img src="default-avatar.png"/>
-            <div class="userInfo">
-                <div class="userName">
-                    ${roleDot} ${user.username}
-                </div>
-                <small>@${user.username}</small>
-            </div>
-        `;
-
-        div.onclick = () => {
-            window.location.href = `profile.html?user=${user.id}`;
-        };
-
-        return div;
-    }
-
-        
 // =======================
 // INFO PANEL TOGGLE
 // =======================    
@@ -93,3 +53,48 @@ export function initInfoPanel() {
 }
 
 
+// =======================
+// USER CARD UI
+// =======================
+
+
+    window.createUserCard = function(user, isPlayer, currentTurn) {
+
+    const div = document.createElement("div");
+     div.className = "userCard";
+
+// role dot
+
+    let roleDot = "";
+    
+        if (user.role === "white") {
+            roleDot = `<span class="dot white"></span>`;
+        } else if (user.role === "black") {
+            roleDot = `<span class="dot black"></span>`;
+        }
+
+//player status
+
+    if (
+        (user.role === "white" && currentTurn === "w") ||
+        (user.role === "black" && currentTurn === "b")
+    ) {
+        div.classList.add("active");
+    }  
+
+    div.innerHTML = `
+        <img src="https://i.pravatar.cc/40"/>
+        <div class="userInfo">
+            <div class="userName">
+                ${roleDot} ${user.username}
+            </div>
+            <small>@${user.username}</small>
+        </div>
+    `;
+
+    div.onclick = () => {
+        window.location.href = `profile.html?user=${user.id}`;
+    };
+
+    return div;
+}

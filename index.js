@@ -1,3 +1,4 @@
+
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -6,344 +7,472 @@ const bcrypt = require("bcrypt");
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
-let port = 8080;
+const port = 8080;
 
 // =======================
-// USER STORAGE (TEMP)
+// USER STORAGE
 // =======================
 
-
-    const users = [];
+const users = [];
 
 // =======================
 // MIDDLEWARE
 // =======================
 
-
-    app.use(express.urlencoded({ extended: true }));
-    app.use(express.json());
-    app.use(express.static(path.join(__dirname, "public")));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
 // =======================
-// SIGNUP
+// AUTH
 // =======================
 
+app.post("/signup", async (req, res) => {
 
-    app.post("/signup", async (req, res) => {
-        const { username, email, password } = req.body;
+    const { username, email, password } = req.body;
 
-        const existingUser = users.find(u => u.email === email);
-        if (existingUser) return res.send("User already exists!");
+    const existingUser =
+        users.find(u => u.email === email);
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+    if (existingUser) {
+        return res.send("User already exists!");
+    }
 
-        users.push({ username, email, password: hashedPassword });
+    const hashedPassword =
+        await bcrypt.hash(password, 10);
 
-        res.redirect("/home.html");
+    users.push({
+        username,
+        email,
+        password: hashedPassword
     });
 
-// =======================
-// LOGIN
-// =======================
+    res.redirect("/home.html");
+});
 
+app.post("/login", async (req, res) => {
 
-    app.post("/login", async (req, res) => {
-        const { email, password } = req.body;
+    const { email, password } = req.body;
 
-        const user = users.find(u => u.email === email);
-        if (!user) return res.send("User not found!");
+    const user =
+        users.find(u => u.email === email);
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.send("Incorrect password!");
+    if (!user) {
+        return res.send("User not found!");
+    }
 
-        res.status(200).send("Login successful");
-    });
+    const match =
+        await bcrypt.compare(password, user.password);
 
+    if (!match) {
+        return res.send("Incorrect password!");
+    }
 
-
+    res.status(200).send("Login successful");
+});
 
 // =======================
 // ROOM STORAGE
 // =======================
 
-
-    const rooms = {};
-    /*
-rooms = {
-  roomId: {
-    players: [{ id, role }], // role: white/black
-    audience: [{ id }],
-    gameState: fen
-  }
-}
-*/
+const rooms = {};
 
 // =======================
-// SOCKET.IO
+// SOCKET CONNECTION
 // =======================
 
+io.on("connection", (socket) => {
 
-    io.on("connection", (socket) => {
+    console.log("Connected:", socket.id);
 
-        console.log("User connected:", socket.id);
-
-        // assign temporary username
-        socket.username = "User_" + socket.id.slice(0, 4);
+    socket.username =
+        "User_" + socket.id.slice(0, 4);
 
     // =======================
     // JOIN ROOM
     // =======================
 
+    socket.on("joinRoom", ({
+        roomId,
+        role,
+        userId
+    }) => {
 
-        socket.on("joinRoom", ({ roomId, role }) => {
+        socket.join(roomId);
 
-            socket.join(roomId);
-            socket.roomId = roomId;
+        socket.roomId = roomId;
+        socket.userId = userId;
 
-            if (!rooms[roomId]) {
-                rooms[roomId] = {
-                    players: [],
-                    audience: [],
-                    gameState: null
-                };
-            }
+        // CREATE ROOM
+        if (!rooms[roomId]) {
 
-            const room = rooms[roomId];
+            rooms[roomId] = {
+                players: [],
+                audience: [],
+                gameState: {
+                    fen: null,
+                    moves: []
+                }
+            };
+        }
 
-    //remove duplicate entries
+        const room = rooms[roomId];
 
-            room.players = room.players.filter(p => p.id !== socket.id);
-            room.audience = room.audience.filter(a => a.id !== socket.id);
+        // =======================
+        // EXISTING USER?
+        // =======================
 
-            let assignedRole = role;
-        
+        let existingPlayer =
+            room.players.find(
+                p => p.userId === userId
+            );
 
+        let existingAudience =
+            room.audience.find(
+                a => a.userId === userId
+            );
+
+        let assignedRole = "audience";
+
+        // =======================
+        // RECONNECT PLAYER
+        // =======================
+
+        if (existingPlayer) {
+
+            existingPlayer.id = socket.id;
+            existingPlayer.disconnected = false;
+
+            assignedRole = existingPlayer.role;
+        }
+
+        // =======================
+        // RECONNECT AUDIENCE
+        // =======================
+
+        else if (existingAudience) {
+
+            existingAudience.id = socket.id;
+            existingAudience.disconnected = false;
+
+            assignedRole = "audience";
+        }
+
+        // =======================
+        // NEW USER
+        // =======================
+
+        else {
+
+            const whitePlayer =
+                room.players.find(
+                    p => p.role === "white"
+                );
+
+            const blackPlayer =
+                room.players.find(
+                    p => p.role === "black"
+                );
+
+            // PLAYER REQUEST
             if (role === "player") {
 
-                if (room.players.length < 2) {
-                    assignedRole = room.players.length === 0 ? "white" : "black";
+                // FIRST PLAYER = WHITE
+                if (!whitePlayer) {
+
+                    assignedRole = "white";
 
                     room.players.push({
                         id: socket.id,
-                        role: assignedRole,
-                        username: socket.username
-
-                    });
-                } else {
-                    assignedRole = "audience";
-
-                    room.audience.push({ 
-                        id: socket.id,
-                        username: socket.username
+                        userId,
+                        role: "white",
+                        username: socket.username,
+                        disconnected: false
                     });
                 }
-            } else {
+
+                // SECOND PLAYER = BLACK
+                else if (!blackPlayer) {
+
+                    assignedRole = "black";
+
+                    room.players.push({
+                        id: socket.id,
+                        userId,
+                        role: "black",
+                        username: socket.username,
+                        disconnected: false
+                    });
+                }
+
+                // OTHERWISE AUDIENCE
+                else {
+
+                    assignedRole = "audience";
+
+                    room.audience.push({
+                        id: socket.id,
+                        userId,
+                        username: socket.username,
+                        disconnected: false
+                    });
+                }
+            }
+
+            // AUDIENCE REQUEST
+            else {
+
                 assignedRole = "audience";
-                room.audience.push({ 
+
+                room.audience.push({
                     id: socket.id,
-                    username: socket.username
+                    userId,
+                    username: socket.username,
+                    disconnected: false
                 });
             }
+        }
 
-        // send assigned role back
+        // =======================
+        // SEND ROLE
+        // =======================
 
-            socket.emit("roleAssigned", assignedRole);
-            
-            socket.emit("setUsername", socket.username);
+        socket.emit("roleAssigned", assignedRole);
 
-        // send room update
+        socket.emit("setUsername", socket.username);
 
-            io.to(roomId).emit("roomUpdate", {
-                players: room.players,
-                audience: room.audience
-            });
+        // =======================
+        // SEND GAME STATE
+        // =======================
 
-            console.log("Room:", roomId, room);
-
-        // send current board state
-
-            if (room.gameState) {
-                socket.emit("init", room.gameState);
-            }
+        socket.emit("init", {
+            fen: room.gameState.fen,
+            moves: room.gameState.moves
         });
+
+        // =======================
+        // UPDATE ROOM
+        // =======================
+
+        io.to(roomId).emit("roomUpdate", {
+            players: room.players,
+            audience: room.audience
+        });
+
+        console.log("ROOM:", roomId);
+    });
 
     // =======================
     // HANDLE MOVE
     // =======================
 
+    socket.on("move", ({
+        roomId,
+        move,
+        fen
+    }) => {
 
-        socket.on("move", ({ roomId, move, fen }) => {
+        const room = rooms[roomId];
 
-            const room = rooms[roomId];
-            if (!room) return;
+        if (!room) return;
 
-            const player = room.players.find(p => p.id === socket.id);
-            if (!player) return; // audience can't move
+        room.gameState.fen = fen;
 
-        // check turn
-            const turn = fen.split(" ")[1]; // 'w' or 'b'
+        room.gameState.moves.push(move);
 
-            const validTurn =
-                (player.role === "white" && turn === "b") ||
-                (player.role === "black" && turn === "w");
+        io.to(roomId).emit("move", move);
 
-            if (!validTurn) {
-                console.log("Invalid turn attempt:", socket.id);
-                return;
-            }
-
-        // save game state
-            room.gameState = fen;
-
-        // broadcast move
-            io.to(roomId).emit("move", move);
+        io.to(roomId).emit("roomUpdate", {
+            players: room.players,
+            audience: room.audience
         });
+    });
+
+    // =======================
+    // JOIN AS PLAYER
+    // =======================
+
+    socket.on("joinAsPlayer", ({
+        roomId,
+        role
+    }) => {
+
+        const room = rooms[roomId];
+
+        if (!room) return;
+
+        // SLOT TAKEN?
+        const taken =
+            room.players.find(
+                p => p.role === role
+            );
+
+        if (taken) return;
+
+        // REMOVE AUDIENCE
+        room.audience =
+            room.audience.filter(
+                a => a.userId !== socket.userId
+            );
+
+        // ADD PLAYER
+        room.players.push({
+            id: socket.id,
+            userId: socket.userId,
+            role,
+            username: socket.username,
+            disconnected: false
+        });
+
+        socket.emit("roleAssigned", role);
+
+        io.to(roomId).emit("roomUpdate", {
+            players: room.players,
+            audience: room.audience
+        });
+    });
+
+    // =======================
+    // CHAT
+    // =======================
+
+    socket.on("chatMessage", ({
+        roomId,
+        message
+    }) => {
+
+        const room = rooms[roomId];
+
+        if (!room) return;
+
+        let role = "audience";
+
+        const player =
+            room.players.find(
+                p => p.userId === socket.userId
+            );
+
+        if (player) {
+            role = player.role;
+        }
+
+        io.to(roomId).emit("chatMessage", {
+            username: socket.username,
+            role,
+            message
+        });
+    });
 
     // =======================
     // DISCONNECT
     // =======================
 
-
-        socket.on("disconnect", () => {
+    socket.on("disconnect", () => {
 
         const roomId = socket.roomId;
+
         if (!roomId || !rooms[roomId]) return;
 
         const room = rooms[roomId];
 
-        const leavingPlayer = room.players.find(p => p.id === socket.id);
+        const leavingPlayer =
+            room.players.find(
+                p => p.userId === socket.userId
+            );
 
-        // remove user
-        room.players = room.players.filter(p => p.id !== socket.id);
-        room.audience = room.audience.filter(a => a.id !== socket.id);
+        const leavingAudience =
+            room.audience.find(
+                a => a.userId === socket.userId
+            );
 
-        // ============================
-        //  PLAYER LEFT → ASK AUDIENCE
-        // ============================
+        // MARK DISCONNECTED
+        if (leavingPlayer) {
+            leavingPlayer.disconnected = true;
+        }
 
+        if (leavingAudience) {
+            leavingAudience.disconnected = true;
+        }
 
-            if (leavingPlayer && room.audience.length > 0) {
+        // WAIT FOR RECONNECT
+        setTimeout(() => {
 
-                const role = leavingPlayer.role;
+            const stillDisconnectedPlayer =
+                room.players.find(
+                    p =>
+                        p.userId === socket.userId &&
+                        p.disconnected
+                );
 
-            // send popup to audience
+            const stillDisconnectedAudience =
+                room.audience.find(
+                    a =>
+                        a.userId === socket.userId &&
+                        a.disconnected
+                );
 
-                io.to(roomId).emit("playerSlotOpen", {
-                    role,
-                    time: 10 // seconds
-                });
+            // REMOVE PLAYER
+            if (stillDisconnectedPlayer) {
 
-            // wait 10 seconds
-                setTimeout(() => {
+                room.players =
+                    room.players.filter(
+                        p => p.userId !== socket.userId
+                    );
 
-                // if still no player filled
-                    const stillMissing = !room.players.find(p => p.role === role);
+                // ASK AUDIENCE
+                if (room.audience.length > 0) {
 
-                    if (stillMissing) {
-                        console.log("No audience joined → AI takes place");
-
-                    // add AI player
-                        room.players.push({
-                            id: "AI_" + role,
-                            role,
-                            username: "AI Bot"
-                        });
-
-                        io.to(roomId).emit("aiJoined", { role });
-                    }
-
-                // update UI
-                    io.to(roomId).emit("roomUpdate", {
-                        players: room.players,
-                        audience: room.audience
-                    });
-
-                }, 10000);
+                    io.to(roomId).emit(
+                        "playerSlotOpen",
+                        {
+                            role: stillDisconnectedPlayer.role,
+                            time: 30
+                        }
+                    );
+                }
             }
 
-        // normal update
+            // REMOVE AUDIENCE
+            if (stillDisconnectedAudience) {
+
+                room.audience =
+                    room.audience.filter(
+                        a => a.userId !== socket.userId
+                    );
+            }
+
+            // UPDATE ROOM
             io.to(roomId).emit("roomUpdate", {
                 players: room.players,
                 audience: room.audience
             });
 
-        // delete room if empty
-            if (room.players.length === 0 && room.audience.length === 0) {
+            // DELETE EMPTY ROOM
+            if (
+                room.players.length === 0 &&
+                room.audience.length === 0
+            ) {
+
                 delete rooms[roomId];
+
+                console.log("Deleted:", roomId);
             }
-        });
 
-
-    // ====================================================
-    //  An audience member is requesting to become a player
-    // =====================================================
-
-
-        socket.on("joinAsPlayer", ({ roomId, role }) => {
-
-            const room = rooms[roomId];
-            if (!room) return;
-
-            // check if slot still free
-                const slotTaken = room.players.find(p => p.role === role);
-                if (slotTaken) return;
-
-            // remove from audience
-                room.audience = room.audience.filter(a => a.id !== socket.id);
-
-            // add to players
-                room.players.push({
-                    id: socket.id,
-                    role,
-                    username: socket.username
-                });
-
-            // notify this user
-                socket.emit("roleAssigned", role);
-
-                io.to(roomId).emit("roomUpdate", {
-                    players: room.players,
-                    audience: room.audience
-                });
-
-            console.log("Audience joined as player:", role);
-        });
-
-
-    // =======================
-    // CHAT BOX
-    // =======================
-
-
-        socket.on("chatMessage", ({ roomId, message }) => {
-
-            const room = rooms[roomId];
-            if (!room) return;
-
-            let role = "audience";
-
-            const player = room.players.find(p => p.id === socket.id);
-            if (player) role = player.role;
-
-            io.to(roomId).emit("chatMessage", {
-                username: socket.username,
-                role,
-                message
-            });
-        });
-        
-        socket.on("typing", ({ roomId }) => {
-            socket.to(roomId).emit("typing", socket.username);
-        });
-
+        }, 10000);
     });
+});
+
+
+
 
 
 // =======================
 // START SERVER
 // =======================
 
-
 http.listen(port, () => {
-    console.log("Server running on http://localhost:" + port);
+    console.log(
+        "Server running on http://localhost:" + port
+    );
 });
+

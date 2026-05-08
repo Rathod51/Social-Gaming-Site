@@ -67,6 +67,21 @@
         </div>
 
 
+
+
+
+        <button id="historyToggleBtn" class="floatingBtn historyBtn">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+        </button>
+
+        <div id="historyBox" class="floatingBox hidden">
+            <div class="historyHeader">Move History</div>
+            <div id="moveHistory" class="historyContent"></div>
+        </div>
+
+
+
+
     <!-- SIDE PANEL -->
 
         <div id="infoPanel">
@@ -75,6 +90,7 @@
 
             <h3>Audience</h3>
             <div id="audienceInfo"></div>
+
         </div>
 
     
@@ -122,8 +138,7 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="lib/chess.js"></script> 
 <script src="lib/chessboard.js"></script>
-<script src="chess.js"></script>
-
+<script type="module" src="chess.js"></script>
 
 </body>
 </html>
