@@ -58,13 +58,32 @@ postBtn.addEventListener("click", () => {
 function savePost(imageURL) {
 
     const newPost = {
-        id: Date.now(),
-        username: "You",
-        text: textInput.value.trim(),
-        image: imageURL,   // ✅ permanent image
-        likes: 0,
-        liked: false,
-        comments: []
+
+    id: Date.now(),
+
+    username:
+        JSON.parse(
+            localStorage.getItem("user")
+        )?.username || "player",
+
+    userImage:
+        JSON.parse(
+            localStorage.getItem("user")
+        )?.image ||
+
+        "https://i.pravatar.cc/150",
+
+    text:
+        textInput.value.trim(),
+
+    image: imageURL,
+
+    likes: 0,
+
+    liked: false,
+
+    comments: []
+};
     };
 
     let posts = JSON.parse(localStorage.getItem("posts")) || [];
@@ -80,4 +99,3 @@ function savePost(imageURL) {
 
     // go back to home
     window.location.href = "home.html";
-}

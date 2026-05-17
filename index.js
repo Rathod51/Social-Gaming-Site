@@ -1,81 +1,103 @@
-
 const express = require("express");
-const app = express();
+const http = require("http");
+const { Server } = require("socket.io");
 const path = require("path");
-const bcrypt = require("bcrypt");
+const { Chess } = require("chess.js");
 
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
+const app = express();
 
-const port = 8080;
+const server = http.createServer(app);
 
-// =======================
-// USER STORAGE
-// =======================
+const io = new Server(server);
 
-const users = [];
-
-// =======================
-// MIDDLEWARE
-// =======================
-
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(express.static(path.join(__dirname, "public")));
 
+const users = [];
+const rooms = {};
+
 // =======================
-// AUTH
+// LOGIN
 // =======================
 
-app.post("/signup", async (req, res) => {
+app.post("/login", (req, res) => {
 
-    const { username, email, password } = req.body;
+    const { username, password } = req.body;
 
-    const existingUser =
-        users.find(u => u.email === email);
+    const user = users.find(
 
-    if (existingUser) {
-        return res.send("User already exists!");
-    }
-
-    const hashedPassword =
-        await bcrypt.hash(password, 10);
-
-    users.push({
-        username,
-        email,
-        password: hashedPassword
-    });
-
-    res.redirect("/home.html");
-});
-
-app.post("/login", async (req, res) => {
-
-    const { email, password } = req.body;
-
-    const user =
-        users.find(u => u.email === email);
+        u =>
+            u.username === username &&
+            u.password === password
+    );
 
     if (!user) {
-        return res.send("User not found!");
+
+        return res.json({
+
+            success: false,
+            message: "Invalid credentials"
+        });
     }
 
-    const match =
-        await bcrypt.compare(password, user.password);
+    res.json({
 
-    if (!match) {
-        return res.send("Incorrect password!");
-    }
-
-    res.status(200).send("Login successful");
+        success: true,
+        username
+    });
 });
 
 // =======================
-// ROOM STORAGE
+// SIGNUP
 // =======================
 
-const rooms = {};
+app.post("/signup", (req, res) => {
+
+    const { username, password } = req.body;
+
+    const exists = users.find(
+
+        u => u.username === username
+    );
+
+    if (exists) {
+
+        return res.json({
+
+            success: false,
+            message: "Username already exists"
+        });
+    }
+
+    users.push({
+
+        username,
+        password
+    });
+
+    res.json({
+
+        success: true
+    });
+});
+
+// =======================
+// HOME
+// =======================
+
+app.get("/", (req, res) => {
+
+    res.sendFile(
+
+        path.join(
+            __dirname,
+            "public",
+            "home.html"
+        )
+    );
+});
 
 // =======================
 // SOCKET CONNECTION
@@ -83,253 +105,205 @@ const rooms = {};
 
 io.on("connection", (socket) => {
 
-    console.log("Connected:", socket.id);
-
-    socket.username =
-        "User_" + socket.id.slice(0, 4);
+    console.log("User connected:", socket.id);
 
     // =======================
     // JOIN ROOM
     // =======================
 
     socket.on("joinRoom", ({
+
         roomId,
-        role,
-        userId
+        username
+
     }) => {
 
         socket.join(roomId);
 
-        socket.roomId = roomId;
-        socket.userId = userId;
+        socket.username = username;
 
         // CREATE ROOM
+
         if (!rooms[roomId]) {
 
             rooms[roomId] = {
-                players: [],
-                audience: [],
-                gameState: {
-                    fen: null,
-                    moves: []
-                }
+
+                game: new Chess(),
+
+                whiteTeam: [],
+
+                blackTeam: [],
+
+                votes: {},
+
+                activeWhiteMover: null,
+
+                activeBlackMover: null
             };
         }
 
         const room = rooms[roomId];
 
-        // =======================
-        // EXISTING USER?
-        // =======================
+        // AUTO TEAM BALANCE
 
-        let existingPlayer =
-            room.players.find(
-                p => p.userId === userId
-            );
+        let role = "white";
 
-        let existingAudience =
-            room.audience.find(
-                a => a.userId === userId
-            );
+        if (
+            room.whiteTeam.length >
+            room.blackTeam.length
+        ) {
 
-        let assignedRole = "audience";
-
-        // =======================
-        // RECONNECT PLAYER
-        // =======================
-
-        if (existingPlayer) {
-
-            existingPlayer.id = socket.id;
-            existingPlayer.disconnected = false;
-
-            assignedRole = existingPlayer.role;
+            role = "black";
         }
 
-        // =======================
-        // RECONNECT AUDIENCE
-        // =======================
+        const user = {
 
-        else if (existingAudience) {
+            id: socket.id,
+            username,
+            role
+        };
 
-            existingAudience.id = socket.id;
-            existingAudience.disconnected = false;
+        // ADD PLAYER
 
-            assignedRole = "audience";
+        if (role === "white") {
+
+            room.whiteTeam.push(user);
+
+        } else {
+
+            room.blackTeam.push(user);
         }
 
-        // =======================
-        // NEW USER
-        // =======================
-
-        else {
-
-            const whitePlayer =
-                room.players.find(
-                    p => p.role === "white"
-                );
-
-            const blackPlayer =
-                room.players.find(
-                    p => p.role === "black"
-                );
-
-            // PLAYER REQUEST
-            if (role === "player") {
-
-                // FIRST PLAYER = WHITE
-                if (!whitePlayer) {
-
-                    assignedRole = "white";
-
-                    room.players.push({
-                        id: socket.id,
-                        userId,
-                        role: "white",
-                        username: socket.username,
-                        disconnected: false
-                    });
-                }
-
-                // SECOND PLAYER = BLACK
-                else if (!blackPlayer) {
-
-                    assignedRole = "black";
-
-                    room.players.push({
-                        id: socket.id,
-                        userId,
-                        role: "black",
-                        username: socket.username,
-                        disconnected: false
-                    });
-                }
-
-                // OTHERWISE AUDIENCE
-                else {
-
-                    assignedRole = "audience";
-
-                    room.audience.push({
-                        id: socket.id,
-                        userId,
-                        username: socket.username,
-                        disconnected: false
-                    });
-                }
-            }
-
-            // AUDIENCE REQUEST
-            else {
-
-                assignedRole = "audience";
-
-                room.audience.push({
-                    id: socket.id,
-                    userId,
-                    username: socket.username,
-                    disconnected: false
-                });
-            }
-        }
-
-        // =======================
         // SEND ROLE
-        // =======================
 
-        socket.emit("roleAssigned", assignedRole);
+        socket.emit(
+            "roleAssigned",
+            role
+        );
 
-        socket.emit("setUsername", socket.username);
-
-        // =======================
         // SEND GAME STATE
-        // =======================
 
-        socket.emit("init", {
-            fen: room.gameState.fen,
-            moves: room.gameState.moves
-        });
+        socket.emit(
+            "gameState",
+            {
 
-        // =======================
-        // UPDATE ROOM
-        // =======================
+                fen:
+                    room.game.fen(),
 
-        io.to(roomId).emit("roomUpdate", {
-            players: room.players,
-            audience: room.audience
-        });
+                history:
+                    room.game.history(),
 
-        console.log("ROOM:", roomId);
+                turn:
+                    room.game.turn()
+            }
+        );
+
+        // SEND ROOM UPDATE
+
+        io.to(roomId).emit(
+            "roomUpdate",
+            {
+
+                whiteTeam:
+                    room.whiteTeam,
+
+                blackTeam:
+                    room.blackTeam,
+
+                votes:
+                    room.votes,
+
+                activeWhiteMover:
+                    room.activeWhiteMover,
+
+                activeBlackMover:
+                    room.activeBlackMover,
+
+                fen:
+                    room.game.fen(),
+
+                history:
+                    room.game.history(),
+
+                turn:
+                    room.game.turn()
+            }
+        );
     });
 
     // =======================
-    // HANDLE MOVE
+    // MOVE
     // =======================
 
     socket.on("move", ({
+
         roomId,
-        move,
-        fen
+        source,
+        target
+
     }) => {
 
         const room = rooms[roomId];
 
         if (!room) return;
 
-        room.gameState.fen = fen;
+        // PREVENT SAME SQUARE
 
-        room.gameState.moves.push(move);
+        if (source === target) {
 
-        io.to(roomId).emit("move", move);
+            socket.emit("invalidMove");
 
-        io.to(roomId).emit("roomUpdate", {
-            players: room.players,
-            audience: room.audience
-        });
-    });
+            return;
+        }
 
-    // =======================
-    // JOIN AS PLAYER
-    // =======================
+        let move = null;
 
-    socket.on("joinAsPlayer", ({
-        roomId,
-        role
-    }) => {
+        try {
 
-        const room = rooms[roomId];
+            move = room.game.move({
 
-        if (!room) return;
+                from: source,
+                to: target,
+                promotion: "q"
+            });
 
-        // SLOT TAKEN?
-        const taken =
-            room.players.find(
-                p => p.role === role
+        } catch (err) {
+
+            console.log(
+                "Invalid move:",
+                err.message
             );
 
-        if (taken) return;
-
-        // REMOVE AUDIENCE
-        room.audience =
-            room.audience.filter(
-                a => a.userId !== socket.userId
+            socket.emit(
+                "invalidMove"
             );
 
-        // ADD PLAYER
-        room.players.push({
-            id: socket.id,
-            userId: socket.userId,
-            role,
-            username: socket.username,
-            disconnected: false
-        });
+            return;
+        }
 
-        socket.emit("roleAssigned", role);
+        if (!move) {
 
-        io.to(roomId).emit("roomUpdate", {
-            players: room.players,
-            audience: room.audience
-        });
+            socket.emit(
+                "invalidMove"
+            );
+
+            return;
+        }
+
+        io.to(roomId).emit(
+            "movePlayed",
+            {
+
+                fen:
+                    room.game.fen(),
+
+                history:
+                    room.game.history(),
+
+                turn:
+                    room.game.turn()
+            }
+        );
     });
 
     // =======================
@@ -337,30 +311,190 @@ io.on("connection", (socket) => {
     // =======================
 
     socket.on("chatMessage", ({
+
         roomId,
+        role,
         message
+
+    }) => {
+
+        io.to(roomId).emit(
+            "chatMessage",
+            {
+
+                username:
+                    socket.username || "Player",
+
+                role,
+
+                message,
+
+                time:
+                    Date.now()
+            }
+        );
+    });
+
+    // =======================
+    // TYPING
+    // =======================
+
+    socket.on("typing", ({
+
+        roomId,
+        username
+
+    }) => {
+
+        socket.to(roomId).emit(
+            "typing",
+            {
+                username
+            }
+        );
+    });
+
+    // =======================
+    // CLAIM MOVE
+    // =======================
+
+    socket.on("claimMove", ({
+
+        roomId
+
     }) => {
 
         const room = rooms[roomId];
 
         if (!room) return;
 
-        let role = "audience";
-
         const player =
-            room.players.find(
-                p => p.userId === socket.userId
+
+            room.whiteTeam.find(
+                p => p.id === socket.id
+            )
+
+            ||
+
+            room.blackTeam.find(
+                p => p.id === socket.id
             );
 
-        if (player) {
-            role = player.role;
+        if (!player) return;
+
+        if (player.role === "white") {
+
+            room.activeWhiteMover =
+                socket.id;
+
+        } else {
+
+            room.activeBlackMover =
+                socket.id;
         }
 
-        io.to(roomId).emit("chatMessage", {
-            username: socket.username,
-            role,
-            message
-        });
+        io.to(roomId).emit(
+            "roomUpdate",
+            {
+
+                whiteTeam:
+                    room.whiteTeam,
+
+                blackTeam:
+                    room.blackTeam,
+
+                votes:
+                    room.votes,
+
+                activeWhiteMover:
+                    room.activeWhiteMover,
+
+                activeBlackMover:
+                    room.activeBlackMover,
+
+                fen:
+                    room.game.fen(),
+
+                history:
+                    room.game.history(),
+
+                turn:
+                    room.game.turn()
+            }
+        );
+    });
+
+    // =======================
+    // VOTE MOVE
+    // =======================
+
+    socket.on("voteMove", ({
+
+        roomId,
+        move
+
+    }) => {
+
+        const room = rooms[roomId];
+
+        if (!room) return;
+
+        if (!room.votes[move]) {
+
+            room.votes[move] = 0;
+        }
+
+        room.votes[move]++;
+
+        io.to(roomId).emit(
+            "voteUpdate",
+            room.votes
+        );
+    });
+
+    // =======================
+    // GAME ENDED
+    // =======================
+
+    socket.on("gameEnded", ({
+
+        roomId,
+        winner,
+        type
+
+    }) => {
+
+        io.to(roomId).emit(
+            "gameEnded",
+            {
+
+                winner,
+                type
+            }
+        );
+    });
+
+    // =======================
+    // RESTART GAME
+    // =======================
+
+    socket.on("restartGame", ({
+
+        roomId
+
+    }) => {
+
+        const room = rooms[roomId];
+
+        if (!room) return;
+
+        room.game = new Chess();
+
+        room.votes = {};
+
+        io.to(roomId).emit(
+            "restartGame"
+        );
     });
 
     // =======================
@@ -369,110 +503,35 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
 
-        const roomId = socket.roomId;
+        Object.values(rooms).forEach(room => {
 
-        if (!roomId || !rooms[roomId]) return;
-
-        const room = rooms[roomId];
-
-        const leavingPlayer =
-            room.players.find(
-                p => p.userId === socket.userId
-            );
-
-        const leavingAudience =
-            room.audience.find(
-                a => a.userId === socket.userId
-            );
-
-        // MARK DISCONNECTED
-        if (leavingPlayer) {
-            leavingPlayer.disconnected = true;
-        }
-
-        if (leavingAudience) {
-            leavingAudience.disconnected = true;
-        }
-
-        // WAIT FOR RECONNECT
-        setTimeout(() => {
-
-            const stillDisconnectedPlayer =
-                room.players.find(
-                    p =>
-                        p.userId === socket.userId &&
-                        p.disconnected
+            room.whiteTeam =
+                room.whiteTeam.filter(
+                    p => p.id !== socket.id
                 );
 
-            const stillDisconnectedAudience =
-                room.audience.find(
-                    a =>
-                        a.userId === socket.userId &&
-                        a.disconnected
+            room.blackTeam =
+                room.blackTeam.filter(
+                    p => p.id !== socket.id
                 );
+        });
 
-            // REMOVE PLAYER
-            if (stillDisconnectedPlayer) {
-
-                room.players =
-                    room.players.filter(
-                        p => p.userId !== socket.userId
-                    );
-
-                // ASK AUDIENCE
-                if (room.audience.length > 0) {
-
-                    io.to(roomId).emit(
-                        "playerSlotOpen",
-                        {
-                            role: stillDisconnectedPlayer.role,
-                            time: 30
-                        }
-                    );
-                }
-            }
-
-            // REMOVE AUDIENCE
-            if (stillDisconnectedAudience) {
-
-                room.audience =
-                    room.audience.filter(
-                        a => a.userId !== socket.userId
-                    );
-            }
-
-            // UPDATE ROOM
-            io.to(roomId).emit("roomUpdate", {
-                players: room.players,
-                audience: room.audience
-            });
-
-            // DELETE EMPTY ROOM
-            if (
-                room.players.length === 0 &&
-                room.audience.length === 0
-            ) {
-
-                delete rooms[roomId];
-
-                console.log("Deleted:", roomId);
-            }
-
-        }, 10000);
+        console.log(
+            "Disconnected:",
+            socket.id
+        );
     });
 });
-
-
-
-
 
 // =======================
 // START SERVER
 // =======================
 
-http.listen(port, () => {
+const PORT = 8080;
+
+server.listen(PORT, () => {
+
     console.log(
-        "Server running on http://localhost:" + port
+        `Server running on port ${PORT}`
     );
 });
-

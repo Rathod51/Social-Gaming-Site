@@ -38,12 +38,23 @@ if (loginForm) {
 
     const data = await res.text();
 
-    if (res.ok) {
-      localStorage.setItem("user", email);
-      window.location.href = "home.html";
-    } else {
-      alert(data);
-    }
+    const username =
+
+    localStorage.getItem("username")
+
+    ||
+
+    "Player_" +
+    Math.floor(Math.random() * 1000);
+    const username = "DemoUser";
+
+window.username = username;
+    // if (res.ok) {
+    //   localStorage.setItem("user", email);
+    //   window.location.href = "home.html";
+    // } else {
+    //   alert(data);
+    // }
   });
 }
 

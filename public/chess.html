@@ -7,20 +7,25 @@
     <link rel="stylesheet" href="chess.css">
     <link rel="stylesheet" href="lib/chessboard.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="game-chat-info.css">
+    <!-- <link rel="stylesheet" href="game-chat-info.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 </head>
 <body>
 
-    <div class="game-area">
 
-    <!-- TOP CONTROLS -->
+<div class="game-area">
+
+        <!-- TOP CONTROLS -->
 
         <div class="top-controls">
-           
+
             <button id="infoBtn" class="top-ctrlBtn">
                 <i class="fa-solid fa-circle-info"></i>
+            </button>
+
+            <button id="shareBtn" class="top-ctrlBtn">
+                <i class="fa-solid fa-share-nodes"></i>
             </button>
 
             <button id="quitBtn" class="top-ctrlBtn">
@@ -29,116 +34,216 @@
 
         </div>
 
-    
-    <!-- ROLE TEXT -->
+        <!-- TURN -->
 
-        <h2 id="roleText"></h2>
+        <h2 id="turnBanner">
+            WHITE TEAM TURN
+        </h2>
 
-    <!-- CHESS BOARD -->
+        <p id="activeMoverText">
+            No active mover
+        </p>
+
+        <p id="leaderText">
+            Player:
+        </p>
+
+        <!-- TIMERS -->
+
+        <div class="timerContainer">
+
+            <div class="timerBox">
+
+                <span>White</span>
+
+                <span id="whiteTimer">
+                    05:00
+                </span>
+
+            </div>
+
+            <div class="timerBox">
+
+                <span>Black</span>
+
+                <span id="blackTimer">
+                    05:00
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- CHESS BOARD -->
 
         <div id="board"></div>
-        <div id="scoreBoard">
-           <div>
-                <small>WHITE</small>
-                <h3 id="whiteScore">0</h3>
-            </div>
 
-            <div>
-                <small>BLACK</small>
-                <h3 id="blackScore">0</h3>
-            </div>
-        </div>
-        
-
-    <!-- CHAT BOX -->
+        <!-- CHAT BUTTON -->
 
         <button id="chatToggleBtn">
+
             <i class="fa-solid fa-comments"></i>
+
         </button>
 
+        <!-- CHAT BOX -->
+
         <div id="chatBox" class="hidden">
-            <div id="messages"></div>
+
+            <div id="chatMessages"></div>
+
             <div id="typingIndicator"></div>
 
             <div id="chatInputArea">
-                <input type="text" id="chatInput" placeholder="Type a message..." />
-                <button id="sendBtn">Send</button>
+
+                <input
+                    type="text"
+                    id="chatInput"
+                    placeholder="Type message..."
+                >
+
+                <button id="sendBtn">
+                    Send
+                </button>
+
+                <button id="claimMoveBtn">
+                    I Make Move
+                </button>
+
             </div>
+
         </div>
 
+        <!-- VOTE BUTTON -->
 
+        <div class="voteContainer">
 
+            <h3>Vote Move</h3>
 
+            <div class="voteInputRow">
 
-        <button id="historyToggleBtn" class="floatingBtn historyBtn">
+                <input
+                    type="text"
+                    id="voteMoveInput"
+                    placeholder="e2e4"
+                >
+
+                <button id="voteBtn">
+                    Vote
+                </button>
+
+            </div>
+
+            <div id="voteResults"></div>
+
+        </div>
+
+        <!-- HISTORY BUTTON -->
+
+        <button
+            id="historyToggleBtn"
+            class="floatingBtn"
+        >
+
             <i class="fa-solid fa-clock-rotate-left"></i>
+
         </button>
 
+        <!-- HISTORY BOX -->
+
         <div id="historyBox" class="floatingBox hidden">
-            <div class="historyHeader">Move History</div>
-            <div id="moveHistory" class="historyContent"></div>
+
+            <div class="historyHeader">
+
+                Move History
+
+            </div>
+
+            <div
+                id="moveHistory"
+                class="historyContent"
+            ></div>
+
         </div>
 
-
-
-
-    <!-- SIDE PANEL -->
+        <!-- INFO PANEL -->
 
         <div id="infoPanel">
-            <h3>Players</h3>
-            <div id="playersInfo"></div>
 
-            <h3>Audience</h3>
-            <div id="audienceInfo"></div>
+            <h3>White Team</h3>
+
+            <div id="whiteTeam"></div>
+
+            <h3>Black Team</h3>
+
+            <div id="blackTeam"></div>
 
         </div>
 
-    
     </div>
 
-<!-- QUIT MODAL -->
+    <!-- QUIT MODAL -->
 
     <div id="quitModal" class="modal hidden">
+
         <div class="modalContent">
-            <p>Are you sure you want to quit the game?</p>
-            <button id="confirmQuit">Yes</button>
-            <button id="cancelQuit">No</button>
+
+            <p>
+                Are you sure you want to quit?
+            </p>
+
+            <button id="confirmQuit">
+                Yes
+            </button>
+
+            <button id="cancelQuit">
+                No
+            </button>
+
         </div>
+
+    </div>
+
+    <!-- GAME RESULT -->
+
+    <div
+        id="gameResultModal"
+        class="gameResultModal hidden"
+    >
+
+        <div class="gameResultCard">
+
+            <h2 id="gameResultText">
+
+                WHITE WINS
+
+            </h2>
+
+            <button id="newGameBtn">
+
+                New Game
+
+            </button>
+
+            <button id="exitGameBtn">
+
+                Exit
+
+            </button>
+
+        </div>
+
     </div>
 
 
-<!-- JOIN MODAL -->
- 
-    <div id="joinModal" class="modal hidden">
-        <div class="modalContent">
-            <h3>Player Left!</h3>
-            <p id="joinText"></p>
 
-            <div id="timerBar"></div>
-
-            <button id="joinBtn">Join</button>
-            <button id="cancelJoin">Cancel</button>
-        </div>
-    </div>    
-
-
-<!--  -->
-    <div id="resultModal" class="modal hidden">
-        <div class="modalContent">
-            <h2 id="resultText"></h2>
-            <button id="newGameBtn">New Game</button>
-        </div>
-    </div>
-
-
-   
-
+                
 <script src="lib/jquery.js"></script>
 <script>window.$ = window.jQuery;</script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="lib/chess.js"></script> 
 <script src="lib/chessboard.js"></script>
-<script type="module" src="chess.js"></script>
+<script type="module" src="game-js/chess.js"></script>
 
 </body>
 </html>

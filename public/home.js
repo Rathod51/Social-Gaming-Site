@@ -1,227 +1,628 @@
-//............unread chats(badge)...............
 
-let unreadCount = parseInt(localStorage.getItem("unreadCount")) || 0;
+// ===============================
+// USER DATA
+// ==============================
+// ===============================
+// SAFE USER DATA
+// ===============================
 
-//...........show badge...................
+let currentUser = {
+    name: "Player",
+    username: "player",
+    image: "https://i.pravatar.cc/150"
+};
 
-const chatBadge = document.getElementById("chatBadge");
- 
-function updateBadge() {
-  if (!chatBadge) return;
+try {
 
-  if (unreadCount > 0) {
-    chatBadge.style.display = "inline-block";
-    chatBadge.textContent = unreadCount;
-  } else {
-    chatBadge.style.display = "none";
-  }
+    const savedUser =
+        localStorage.getItem("user");
+
+    if (savedUser) {
+
+        const parsed =
+            JSON.parse(savedUser);
+
+        currentUser = {
+            ...currentUser,
+            ...parsed
+        };
+    }
+
+} catch (err) {
+
+    console.log("Broken user data removed");
+
+    localStorage.removeItem("user");
 }
+
+
+
+// ===============================
+// CHAT BADGE
+// ===============================
+
+let unreadCount =
+    parseInt(localStorage.getItem("unreadCount")) || 0;
+
+const chatBadge =
+    document.getElementById("chatBadge");
+
+function updateBadge() {
+
+    if (!chatBadge) return;
+
+    if (unreadCount > 0) {
+
+        chatBadge.style.display = "inline-block";
+
+        chatBadge.textContent = unreadCount;
+
+    } else {
+
+        chatBadge.style.display = "none";
+    }
+}
+
 updateBadge();
 
-//..................increase badge (new message)................
-function receiveMessage() {
-  unreadCount++;
-  localStorage.setItem("unreadCount", unreadCount);
-  updateBadge();
-}
+document
+.querySelector('[data-link="chat.html"]')
+?.addEventListener("click", () => {
 
-//...................reset badge when user opens chat....................
+    unreadCount = 0;
 
-document.querySelector('[data-link="chat.html"]')?.addEventListener("click", () => {
-  unreadCount = 0;
-  localStorage.setItem("unreadCount", unreadCount);
+    localStorage.setItem(
+        "unreadCount",
+        unreadCount
+    );
+
+    updateBadge();
 });
 
-//.................real time messages..............
-
-// still one function is remaining for real time notify
-
-
-
-
-
-
-
-
-function savePosts() {
-  localStorage.setItem("posts", JSON.stringify(posts));
-}
+// ===============================
+// POSTS STORAGE
+// ===============================
 
 function loadPosts() {
-  return JSON.parse(localStorage.getItem("posts")) || [];
+
+    try {
+
+        const data = JSON.parse(
+            localStorage.getItem("posts")
+        );
+
+        return Array.isArray(data)
+            ? data
+            : [];
+
+    } catch {
+
+        return [];
+    }
 }
 
 let posts = loadPosts();
 
+function savePosts() {
 
-//..............to create posts..................
-function createPost(text, imageURL) {
-    let posts = JSON.parse(localStorage.getItem("posts")) || [
-  {
-    id: 1,
-    username: "PlayerOne",
-    text: "Just won my chess match ♟️🔥",
-    image: "https://picsum.photos/600/300",
-    likes: 5,
-    liked: false,
-    comments: ["Nice!", "GG"]
-  },
-  {
-    id: 2,
-    username: "ProGamer",
-    text: "Top score today 🚀",
-    image: "https://picsum.photos/600/301",
-    likes: 12,
-    liked: false,
-    comments: []
-  },
-  {
-    id: 3,
-    username: "NoobMaster",
-    text: "Learning new tricks 😎",
-    image: "",
-    likes: 2,
-    liked: false,
-    comments: []
-  }
-];
-
-    posts.unshift(newPost);
-    localStorage.setItem("posts", JSON.stringify(posts));
-    renderPosts();
+    localStorage.setItem(
+        "posts",
+        JSON.stringify(posts)
+    );
 }
 
- console.log(posts);
-//.....................to render a post......................
+// ===============================
+// DEMO POST
+// ===============================
+
+if (posts.length === 0) {
+
+    posts.push({
+
+        id: Date.now(),
+
+        username: currentUser.username,
+
+        userImage: currentUser.image,
+
+        text: "Welcome to GameHub 🎮",
+
+        image: "https://picsum.photos/700/500",
+
+        likes: 0,
+
+        liked: false,
+
+        comments: []
+    });
+
+    savePosts();
+}
+
+// ===============================
+// RENDER POSTS
+// ===============================
 
 function renderPosts() {
-  const feed = document.querySelector(".feed");
-  feed.innerHTML = "";
 
-  posts.forEach(post => {
-    feed.innerHTML += `
-      <div class="post" data-id="${post.id}">
+    const feed =
+        document.querySelector(".feed");
 
-        <div class="post-header">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <img src="https://i.pravatar.cc/40">
-                <div>
-                    <span class="username">${post.username}</span>
-                    <div class="post-time">2 hours ago</div>
-                </div> 
+    if (!feed) return;
+
+    feed.innerHTML = "";
+
+    posts.forEach(post => {
+
+        const html = `
+
+        <div class="post" data-id="${post.id}">
+
+            <div class="post-header">
+
+                <div style="display:flex;align-items:center;gap:10px;">
+
+                    <img
+                        src="${post.userImage || 'https://i.pravatar.cc/150'}"
+                    >
+
+                    <div>
+
+                        <span class="username">
+                            ${post.username || "player"}
+                        </span>
+
+                        <div class="post-time">
+                            2 hours ago
+                        </div>
+
+                    </div>
+
+                </div>
+
                 <button class="post-options-btn">
-                  <i    class="fa-solid fa-ellipsis"></i>
+                    <i class="fa-solid fa-ellipsis"></i>
                 </button>
 
-              <div class="post-menu">
-                <div class="post-menu-item">Add to Highlightes</div>
-                <div class="post-menu-item">Go to Account</div>
-                <div class="post-menu-item">Copy link</div>
-                <div class="post-menu-item">Share</div>
-                <div class="post-menu-item">Report</div>
-              </div>
+                <div class="post-menu">
+
+                    <div class="post-menu-item add-highlight">
+                        Add to Highlights
+                    </div>
+
+                    <div class="post-menu-item goto-profile">
+                        Go to Account
+                    </div>
+
+                    <div class="post-menu-item copy-link">
+                        Copy Link
+                    </div>
+
+                    <div class="post-menu-item share-post">
+                        Share
+                    </div>
+
+                    <div class="post-menu-item report-post">
+                        Report
+                    </div>
+
+                </div>
+
             </div>
-          </div>
-    
 
-        <p class="post-text">${post.text}</p>
+            <p class="post-text">
+                ${post.text || ""}
+            </p>
 
-         ${post.image ? `<img src="${post.image}" class="post-img">` : ""}
+            ${post.image
+                ? `
+                <img
+                    src="${post.image}"
+                    class="post-img"
+                >
+                `
+                : ""
+            }
 
-        <div class="post-actions">
-            <div class="left-actions">
-                <button class="like-btn">
-                    <i class="${post.liked ? "fa-solid" : "fa-regular"} fa-heart"></i>
+            <div class="post-actions">
+
+                <div class="left-actions">
+
+                    <button class="like-btn">
+
+                        <i class="${post.liked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+
+                    </button>
+
+                    <span class="like-count">
+                        ${post.likes || 0}
+                    </span>
+
+                    <button class="comment-btn">
+
+                        <i class="fa-regular fa-comment"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                class="comment-section"
+                style="display:none;"
+            >
+
+                <div class="comment-list">
+
+                    ${(post.comments || []).map(c => `
+                        <div class="comment-item">
+                            ${c}
+                        </div>
+                    `).join("")}
+
+                </div>
+
+                <input
+                    class="comment-input"
+                    placeholder="Write comment"
+                >
+
+                <button class="post-comment-btn">
+                    Post
                 </button>
-                <span class="like-count">${post.likes}</span>
 
-
-                <button class="icon-btn comment-btn">
-                    <i class="fa-regular fa-comment"></i>
-                </button>
-            </div>    
-        </div>
-
-        <div class="comment-section" style="display:none;">
-            <div class="comment-list">
-                  ${post.comments.map(c => `<div class="comment-item">${c}</div>`).join("")}
-              </div>
-            
-            <input class="comment-input" placeholder="Write comment">
-            <button class="post-comment-btn">Post</button>
-
-              
+            </div>
 
         </div>
+        `;
 
-        
-
-      </div>
-    `;
-  });
+        feed.insertAdjacentHTML(
+            "beforeend",
+            html
+        );
+    });
 }
 
 renderPosts();
 
-
-//.................Add interaction (like and comment).........................
+// ===============================
+// POST INTERACTIONS
+// ===============================
 
 document.addEventListener("click", (e) => {
 
-// open menu
+    const postEl =
+        e.target.closest(".post");
+
+    // ===========================
+    // OPEN MENU
+    // ===========================
+
     if (e.target.closest(".post-options-btn")) {
-        const post = e.target.closest(".post");
-        const menu = post.querySelector(".post-menu");
+
+        const menu =
+            postEl.querySelector(".post-menu");
+
+        document
+        .querySelectorAll(".post-menu")
+        .forEach(m => {
+
+            if (m !== menu) {
+                m.classList.remove("active");
+            }
+        });
 
         menu.classList.toggle("active");
     }
 
-// close when clicking outside
-    document.querySelectorAll(".post-menu").forEach(menu => {
-        if (!menu.contains(e.target) && !e.target.closest(".post-options-btn")) {
-        menu.classList.remove("active");
-        }
-    });
+    // ===========================
+    // CLOSE MENU
+    // ===========================
 
-//LIKE
+    if (
+        !e.target.closest(".post-menu") &&
+        !e.target.closest(".post-options-btn")
+    ) {
+
+        document
+        .querySelectorAll(".post-menu")
+        .forEach(menu => {
+
+            menu.classList.remove("active");
+        });
+    }
+
+    // ===========================
+    // LIKE
+    // ===========================
+
     if (e.target.closest(".like-btn")) {
-        const postEl = e.target.closest(".post");
-        const id = postEl.dataset.id;
 
-        const post = posts.find(p => p.id == id);
-        
+        const id =
+            postEl.dataset.id;
+
+        const post =
+            posts.find(
+                p => p.id == id
+            );
+
+        if (!post) return;
+
         post.liked = !post.liked;
-        post.likes += post.liked ? 1 : -1;
+
+        post.likes +=
+            post.liked ? 1 : -1;
+
+        if (post.likes < 0) {
+            post.likes = 0;
+        }
 
         savePosts();
-        renderPosts();
+
+        const icon =
+            postEl.querySelector(".like-btn i");
+
+        const count =
+            postEl.querySelector(".like-count");
+
+        icon.className =
+            `${post.liked ? 'fa-solid' : 'fa-regular'} fa-heart`;
+
+        count.textContent =
+            post.likes;
     }
 
-//.................. TOGGLE COMMENT ............................
+    // ===========================
+    // TOGGLE COMMENTS
+    // ===========================
 
     if (e.target.closest(".comment-btn")) {
-        const section = e.target.closest(".post").querySelector(".comment-section");
+
+        const section =
+            postEl.querySelector(".comment-section");
 
         section.style.display =
-        section.style.display === "none" ? "block" : "none";
+            section.style.display === "none"
+            ? "block"
+            : "none";
     }
 
-//.................... ADD COMMENT .........................
+    // ===========================
+    // ADD COMMENT
+    // ===========================
 
     if (e.target.closest(".post-comment-btn")) {
-        const postEl = e.target.closest(".post");
-        const id = postEl.dataset.id;
 
-        const input = postEl.querySelector(".comment-input");
-        const text = input.value.trim();
+        const input =
+            postEl.querySelector(".comment-input");
+
+        const text =
+            input.value.trim();
 
         if (!text) return;
 
-        const post = posts.find(p => p.id == id);
+        const id =
+            postEl.dataset.id;
+
+        const post =
+            posts.find(
+                p => p.id == id
+            );
+
+        if (!post) return;
+
         post.comments.push(text);
 
         savePosts();
+
         renderPosts();
     }
 
+    // ===========================
+    // ADD TO HIGHLIGHTS
+    // ===========================
+
+    if (e.target.closest(".add-highlight")) {
+
+        const id =
+            postEl.dataset.id;
+
+        const post =
+            posts.find(
+                p => p.id == id
+            );
+
+        if (!post) return;
+
+        let highlights =
+            JSON.parse(
+                localStorage.getItem("highlights")
+            ) || [];
+
+        highlights.push({
+
+            title:
+                post.text || "Highlight",
+
+            stories: [
+
+                {
+                    image: post.image || "",
+                    content: post.text || ""
+                }
+            ]
+        });
+
+        localStorage.setItem(
+            "highlights",
+            JSON.stringify(highlights)
+        );
+
+        alert("Added to highlights");
+    }
+
+    // ===========================
+    // GO TO PROFILE
+    // ===========================
+
+    if (e.target.closest(".goto-profile")) {
+
+        window.location.href =
+            "profile.html";
+    }
+
+    // ===========================
+    // COPY LINK
+    // ===========================
+
+    if (e.target.closest(".copy-link")) {
+
+        navigator.clipboard.writeText(
+            `post-${postEl.dataset.id}`
+        );
+
+        alert("Link copied");
+    }
+
+    // ===========================
+    // SHARE
+    // ===========================
+
+    if (e.target.closest(".share-post")) {
+
+        alert("Post shared");
+    }
+
+    // ===========================
+    // REPORT
+    // ===========================
+
+    if (e.target.closest(".report-post")) {
+
+        alert("Post reported");
+    }
+});
+
+// ===============================
+// TOP 50 PLAYERS
+// ===============================
+
+const topPlayersBtn =
+    document.getElementById("topPlayersBtn");
+
+if (topPlayersBtn) {
+
+    topPlayersBtn.addEventListener("click", () => {
+
+        let players = [];
+
+        for (let i = 1; i <= 50; i++) {
+
+            players.push({
+
+                rank: i,
+
+                username:
+                    "player_" + i,
+
+                score:
+                    Math.floor(
+                        Math.random() * 5000
+                    ),
+
+                winRate:
+                    Math.floor(
+                        Math.random() * 100
+                    ),
+
+                image:
+                    "https://i.pravatar.cc/150?img=" + i
+            });
+        }
+
+        players.sort(
+            (a, b) =>
+                b.winRate - a.winRate
+        );
+
+        openTopPlayers(players);
     });
+}
+
+// ===============================
+// TOP PLAYERS MODAL
+// ===============================
+
+function openTopPlayers(players) {
+
+    const overlay =
+        document.createElement("div");
+
+    overlay.className =
+        "top-player-overlay";
+
+    overlay.innerHTML = `
+
+    <div class="top-player-modal">
+
+        <div class="top-player-header">
+
+            <h2>Top 50 Players</h2>
+
+            <button class="close-top-players">
+                ✕
+            </button>
+
+        </div>
+
+        <div class="top-player-list">
+
+            ${players.map(player => `
+
+                <div class="player-row">
+
+                    <div class="player-left">
+
+                        <span class="rank">
+                            #${player.rank}
+                        </span>
+
+                        <img src="${player.image}">
+
+                        <span>
+                            ${player.username}
+                        </span>
+
+                    </div>
+
+                    <div class="player-right">
+
+                        <span>
+                            🏆 ${player.score}
+                        </span>
+
+                        <span>
+                            🎯 ${player.winRate}%
+                        </span>
+
+                    </div>
+
+                </div>
+
+            `).join("")}
+
+        </div>
+
+    </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    overlay
+    .querySelector(".close-top-players")
+    .onclick = () => {
+
+        overlay.remove();
+    };
+}

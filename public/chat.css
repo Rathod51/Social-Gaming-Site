@@ -209,3 +209,24 @@
     }
 }
 
+
+/* =======================
+CLAIM MOVE BUTTON
+======================= */
+
+#claimMoveBtn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px;
+    background: #4cafef;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#claimMoveBtn:hover {
+    background: #3ea6e0;
+}
+

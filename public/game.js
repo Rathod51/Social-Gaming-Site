@@ -1,14 +1,20 @@
 let role = "";
 
-document.getElementById("playerBtn").onclick = () => {
-    role = "player";
+document.getElementById("whiteBtn").onclick = () => {
+    role = "white";
     showNext();
 };
 
-document.getElementById("audienceBtn").onclick = () => {
-    role = "audience";
+document.getElementById("blackeBtn").onclick = () => {
+    role = "black";
     showNext();
 };
+
+
+// =======================
+// SHOW GAME SELECT
+// =======================
+
 
 function showNext(){
     document.getElementById("q1").style.display = "none";

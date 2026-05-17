@@ -3,295 +3,388 @@ body{
     background:#1e1e2f;
     color:white;
     font-family:Arial;
-    text-align:center;
+    overflow:hidden;
 }
 
 .game-area{
-    margin-top:50px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top:20px;
+}
+
+/* =======================
+TOP BUTTONS
+======================= */
+
+.top-controls{
+    position:fixed;
+    top:20px;
+    right:20px;
+    display:flex;
+    gap:10px;
+    z-index:1000;
+}
+
+.top-ctrlBtn{
+    background:none;
+    border:none;
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+    padding:10px;
+    border-radius:8px;
+}
+
+.top-ctrlBtn:hover{
+    transform:scale(1.1);
+    background:rgba(255,255,255,0.1);
+}
+
+/* =======================
+TEXT
+======================= */
+
+#turnBanner{
+    margin-top:20px;
+    color:#4cafef;
+}
+
+#activeMoverText{
+    color:#4cafef;
+    margin-top:5px;
+}
+
+#leaderText{
+    margin-top:5px;
+}
+
+/* =======================
+TIMERS
+======================= */
+
+.timerContainer{
+    display:flex;
+    gap:40px;
+    margin:15px 0;
+}
+
+.timerBox{
+    background:#2f2f5f;
+    padding:10px 20px;
+    border-radius:10px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+/* =======================
+BOARD
+======================= */
+
+#board{
+    width:400px;
+    margin-top:10px;
+    margin-top:30px;
+    margin-bottom:120px;
+}
+
+/* =======================
+CHAT BUTTON
+======================= */
+
+#chatToggleBtn{
+    position:fixed;
+    left:20px;
+    bottom:20px;
+    width:60px;
+    height:60px;
+    border:none;
+    border-radius:50%;
+    background:#4cafef;
+    color:white;
+    font-size:24px;
+    cursor:pointer;
+    z-index:1000;
+}
+
+#chatToggleBtn:hover{
+    background:#3ea6e0;
+}
+
+/* =======================
+CHAT BOX
+======================= */
+
+#chatBox{
+    position:fixed;
+    left:20px;
+    bottom:90px;
+    width:350px;
+    height:450px;
+    background:#2f2f5f;
+    border-radius:10px;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    z-index:10000;
+}
+
+#chatMessages{
+    flex:1;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.message{
+    background:#1e1e2f;
+    padding:8px;
+    border-radius:8px;
+    max-width:75%;
+}
+
+.message.me{
+    align-self:flex-end;
+}
+
+.message.other{
+    align-self:flex-start;
+}
+
+.msgHeader{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    margin-bottom:4px;
+}
+
+.msgText{
+    font-size:14px;
+}
+
+#typingIndicator{
+    font-size:12px;
+    color:#aaa;
+    margin-top:5px;
+}
+
+#chatInputArea{
+    display:flex;
+    gap:5px;
+    margin-top:10px;
+}
+
+#chatInput{
+    flex:1;
+    border:none;
+    border-radius:5px;
+    padding:8px;
+}
+
+#sendBtn,
+#claimMoveBtn{
+    border:none;
+    border-radius:5px;
+    padding:8px 10px;
+    cursor:pointer;
+}
+
+/* =======================
+VOTE SYSTEM
+======================= */
+.voteContainer{
+
+    position: fixed;
+    left: 20px;
+    bottom: 180px;
+    width: 250px;
+    background: #2f2f5f;
+    padding: 15px;
+    border-radius: 12px;
+    z-index: 1000;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 10px;
 }
 
-#board {
-    width: 400px;
-    margin: 20px auto;
+.voteInputRow{
+    display:flex;
+    gap:5px;
+    margin-top:10px;
 }
 
-#scoreBoard {
-    display: flex;
-    justify-content: space-around;
-    width: 400px;
-    margin-top: 10px;
+#voteMoveInput{
+    flex:1;
+    padding:6px;
+    border:none;
+    border-radius:5px;
 }
 
+#voteBtn{
+    border:none;
+    border-radius:5px;
+    padding:6px 10px;
+    cursor:pointer;
+}
 
-/*======================= 
-    SLIDE BAR
-=======================*/
+/* =======================
+MOVE HISTORY
+======================= */
 
-    .top-controls{
-        position:absolute;
-        top:20px;
-        right:20px;
-    }
+.floatingBtn{
+    position:fixed;
+    left:20px;
+    bottom:100px;
+    width:65px;
+    height:65px;
+    border:none;
+    border-radius:50%;
+    background:#4cafef;
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+    z-index:1000;
+}
 
-    .top-ctrlBtn {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 22px;
-        cursor: pointer;
-        padding: 10px;
-        border-radius: 8px;
-    }
+.floatingBox{
+    position:fixed;
+    left:90px;
+    bottom:100px;
+    width:260px;
+    height:300px;
+    background:#2f2f5f;
+    border-radius:10px;
+    overflow:hidden;
+    z-index:1000;
+}
 
-    .top-ctrlBtn:hover {
-        transform: scale(1.2);
-        background: rgba(255, 255, 255, 0.1);
-    }
+.historyHeader{
+    background:#1e1e2f;
+    padding:10px;
+    font-weight:bold;
+}
 
-    #infoPanel {
-        position: fixed;
-        right: -300px; /* hidden */
-        top: 0;
-        width: 300px;
-        height: 100%;
-        background: #2f2f5f;
-        padding: 15px;
-        transition: right 0.3s ease;
-        overflow-y: auto;
-        z-index: 100;
-    }
+.historyContent{
+    padding:10px;
+    overflow-y:auto;
+    height:240px;
+}
 
-    #infoPanel.open {
-        right: 0;
-    }
+.moveRow{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+}
 
-    #infoPanel h3 {
-        margin-bottom: 5px;
-        font-size: 16px;
-        border-bottom: 1px solid #555;
-    }
-    .userInfo {
-        text-align: left;
-    }
+/* =======================
+INFO PANEL
+======================= */
 
-    .userName {
-        font-weight: bold;
-    }
-    .dot {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 6px;
-    }
+#infoPanel{
+    position:fixed;
+    top:0;
+    right:-300px;
+    width:300px;
+    height:100%;
+    background:#2f2f5f;
+    padding:15px;
+    transition:0.3s;
+    overflow-y:auto;
+    z-index:1000;
+}
 
-    .dot.white {
-        background: white;
-        border: 1px solid #999;
-    }
+#infoPanel.open{
+    right:0;
+}
 
-    .dot.black {
-        background: black;
-    }
+.userCard{
+    background:#1e1e2f;
+    padding:10px;
+    border-radius:8px;
+    margin:10px 0;
+}
 
-    .userCard {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: #1e1e2f;
-        padding: 8px;
-        margin: 8px 0;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: 0.2s;
-    }
+.onlineDot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    display:inline-block;
+    margin-right:5px;
+}
 
-    .userCard:hover {
-        background: #3a3a6f;
-    }
+.online{
+    background:#2ecc71;
+}
 
-    .userCard img {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        border: 2px solid white;
-    }
+.offline{
+    background:#888;
+}
 
-    .userCard.active {
-        background: #4cafef;
-        border: 2px solid #fff;
-        box-shadow: 0 0 10px #4cafef;
-    }
+/* =======================
+MODAL
+======================= */
 
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.7);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:2000;
+}
 
-/*======================= 
-    MODAL (JOIN/ QUIT)
-=======================*/
+.modalContent{
+    background:#2f2f5f;
+    padding:25px;
+    border-radius:10px;
+    text-align:center;
+}
 
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.6);
-        justify-content: center;
-        align-items: center;
-        /* z-index: 200; */
-    }
+.modalContent button{
+    margin-top:10px;
+    padding:10px 15px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
 
-    .modalContent {
-        background: #2f2f5f;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-    }
+/* =======================
+GAME RESULT
+======================= */
 
-    #timerBar {
-        height:5px;
-        background:#4cafef;
-        margin:10px 0;
-        transition: width linear;
-    }
+.gameResultModal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.75);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:3000;
+}
 
-    .modalContent button {
-        margin: 10px;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-    }
+.gameResultCard{
+    background:#1e1e2f;
+    padding:30px;
+    border-radius:20px;
+    width:320px;
+    text-align:center;
+}
 
-/*======================= 
-    TIMER
-=======================*/
+.gameResultCard button{
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
 
-    #timerContainer {
-        display: flex;
-        justify-content: space-between;
-        width: 400px;
-        margin-top: 10px;
-    }
+/* =======================
+HIDDEN
+======================= */
 
-    #whiteTimer, #blackTimer {
-        font-size: 20px;
-        padding: 5px 10px;
-        background: #333;
-        border-radius: 6px;
-    }
-    .activeTimer {
-        background: #4cafef;
-    }
-
-/*======================= 
-    MOVE HISTORY
-=======================*/
-
-    .moveHistory {
-    max-height: 250px;
-    overflow-y: auto;
-    padding: 10px;
-    background: #1e1e2f;
-    border-radius: 10px;
-    font-size: 14px;
-    }
-
-    .moveRow {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 5px;
-        color: #ccc;
-    }
-
-    .moveNumber {
-        color: #aaa;
-        width: 30px;
-    }
-
-    .moveWhite {
-        color: #fff;
-        width: 60px;
-    }
-
-    .moveBlack {
-        color: #ccc;
-        width: 60px;
-    }
-
-    .lastMove {
-        background: rgba(76, 175, 239, 0.2);
-        padding: 2px 6px;
-        border-radius: 5px;
-    }
-
-    /* Floating button */
-    .floatingBtn {
-        position: fixed;
-        bottom: 80px;
-        left: 20px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #4cafef;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-    }
-
-    /* Move history box */
-    .floatingBox {
-        position: fixed;
-        bottom: 140px;
-        left: 20px;
-        width: 260px;
-        height: 300px;
-        background: #1e1e2f;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    .hidden {
-        display: none;
-    }
-
-    .historyHeader {
-        padding: 10px;
-        background: #333;
-        color: white;
-        font-weight: bold;
-    }
-
-    .historyContent {
-        flex: 1;
-        overflow-y: auto;
-        padding: 10px;
-    }
-
-    #historyToggleBtn {
-        position: fixed;
-        bottom: 90px; 
-        left: 20px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #4cafef;
-        border: none;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
-    }
-
-    #historyToggleBtn:hover {
-        transform: scale(1.1);
-        background: #3ea6e0;
-
-    }
-
-
-
+.hidden{
+    display:none !important;
+}

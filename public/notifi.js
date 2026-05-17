@@ -1,119 +1,119 @@
-const notifBtn = document.querySelector(".notif-btn");
-const panel = document.getElementById("notifPanel");
-const overlay = document.getElementById("notifOverlay");
+// // const notifBtn = document.querySelector(".notif-btn");
+// // const panel = document.getElementById("notifPanel");
+// // const overlay = document.getElementById("notifOverlay");
 
-// open panel
-notifBtn?.addEventListener("click", (e) => {
-  e.preventDefault(); // stop page redirect
+// // open panel
+// notifBtn?.addEventListener("click", (e) => {
+//   e.preventDefault(); // stop page redirect
 
-  panel.classList.add("active");
-  overlay.classList.add("active");
-});
+//   panel.classList.add("active");
+//   overlay.classList.add("active");
+// });
 
-// close when clicking outside
-overlay.addEventListener("click", () => {
-  panel.classList.remove("active");
-  overlay.classList.remove("active");
-});
+// // close when clicking outside
+// overlay.addEventListener("click", () => {
+//   panel.classList.remove("active");
+//   overlay.classList.remove("active");
+// });
 
-//..........for Notification...................
-
-
-const notifBtn = document.querySelector(".notif-btn");
-const panel = document.getElementById("notifPanel");
-const overlay = document.getElementById("notifOverlay");
-
-if (notifBtn && panel && overlay) {
-  notifBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    panel.classList.add("active");
-    overlay.classList.add("active");
-
-    // mark all as read when opening panel
-    markAllNotificationsRead();
-    updateNotifBadge();
-  });
-}
-
-overlay?.addEventListener("click", closePanel);
-
-panel?.addEventListener("click", (e) => e.stopPropagation());
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closePanel();
-});
-
-function closePanel() {
-  panel.classList.remove("active");
-  overlay.classList.remove("active");
-}
+// //..........for Notification...................
 
 
+// const notifBtn = document.querySelector(".notif-btn");
+// const panel = document.getElementById("notifPanel");
+// const overlay = document.getElementById("notifOverlay");
 
-//...................... notification data helper .........................
+// if (notifBtn && panel && overlay) {
+//   notifBtn.addEventListener("click", (e) => {
+//     e.preventDefault();
+//     panel.classList.add("active");
+//     overlay.classList.add("active");
 
-function getNotifications() {
-  return JSON.parse(localStorage.getItem("notifications")) || [];
-}
+//     // mark all as read when opening panel
+//     markAllNotificationsRead();
+//     updateNotifBadge();
+//   });
+// }
 
-function saveNotifications(list) {
-  localStorage.setItem("notifications", JSON.stringify(list));
-}
+// overlay?.addEventListener("click", closePanel);
 
-function addNotification(type, message) {
-  const list = getNotifications();
+// panel?.addEventListener("click", (e) => e.stopPropagation());
 
-  list.unshift({
-    id: Date.now(),
-    type,
-    message,
-    time: new Date().toLocaleString(),
-    read: false
-  });
+// document.addEventListener("keydown", (e) => {
+//   if (e.key === "Escape") closePanel();
+// });
 
-  saveNotifications(list);
-  updateNotifBadge();
-}
+// function closePanel() {
+//   panel.classList.remove("active");
+//   overlay.classList.remove("active");
+// }
 
-function markAllNotificationsRead() {
-  const list = getNotifications().map(n => ({ ...n, read: true }));
-  saveNotifications(list);
-}
 
-function getUnreadCount() {
-  return getNotifications().filter(n => !n.read).length;
-}
 
-const notifBadge = document.getElementById("notifBadge");
+// //...................... notification data helper .........................
 
-function updateNotifBadge() {
-  if (!notifBadge) return;
+// function getNotifications() {
+//   return JSON.parse(localStorage.getItem("notifications")) || [];
+// }
 
-  const count = getUnreadCount();
+// function saveNotifications(list) {
+//   localStorage.setItem("notifications", JSON.stringify(list));
+// }
 
-  if (count > 0) {
-    notifBadge.style.display = "flex";
-    notifBadge.textContent = count;
-  } else {
-    notifBadge.style.display = "none";
-  }
-}
+// function addNotification(type, message) {
+//   const list = getNotifications();
 
-// .................badge logic.......................
-const notifBadge = document.getElementById("notifBadge");
+//   list.unshift({
+//     id: Date.now(),
+//     type,
+//     message,
+//     time: new Date().toLocaleString(),
+//     read: false
+//   });
 
-function updateNotifBadge() {
-  if (!notifBadge) return;
+//   saveNotifications(list);
+//   updateNotifBadge();
+// }
 
-  const count = getUnreadCount();
+// function markAllNotificationsRead() {
+//   const list = getNotifications().map(n => ({ ...n, read: true }));
+//   saveNotifications(list);
+// }
 
-  if (count > 0) {
-    notifBadge.style.display = "flex";
-    notifBadge.textContent = count;
-  } else {
-    notifBadge.style.display = "none";
-  }
-}
+// function getUnreadCount() {
+//   return getNotifications().filter(n => !n.read).length;
+// }
 
-// run on load
-updateNotifBadge();
+// const notifBadge = document.getElementById("notifBadge");
+
+// function updateNotifBadge() {
+//   if (!notifBadge) return;
+
+//   const count = getUnreadCount();
+
+//   if (count > 0) {
+//     notifBadge.style.display = "flex";
+//     notifBadge.textContent = count;
+//   } else {
+//     notifBadge.style.display = "none";
+//   }
+// }
+
+// // .................badge logic.......................
+// const notifBadge = document.getElementById("notifBadge");
+
+// function updateNotifBadge() {
+//   if (!notifBadge) return;
+
+//   const count = getUnreadCount();
+
+//   if (count > 0) {
+//     notifBadge.style.display = "flex";
+//     notifBadge.textContent = count;
+//   } else {
+//     notifBadge.style.display = "none";
+//   }
+// }
+
+// // run on load
+// updateNotifBadge();
