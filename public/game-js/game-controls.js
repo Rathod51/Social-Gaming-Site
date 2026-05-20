@@ -2,16 +2,12 @@ export function initControls() {
 
     // HISTORY
 
-    const historyBtn =
-        document.getElementById("historyToggleBtn");
-
-    const historyBox =
-        document.getElementById("historyBox");
+    const historyBtn =document.getElementById("historyToggleBtn");
+    const historyBox =document.getElementById("historyBox");
 
     if (historyBtn && historyBox) {
 
         historyBtn.addEventListener("click", () => {
-
             historyBox.classList.toggle("hidden");
 
         });
@@ -19,22 +15,14 @@ export function initControls() {
 
     // QUIT MODAL
 
-    const quitBtn =
-        document.getElementById("quitBtn");
-
-    const quitModal =
-        document.getElementById("quitModal");
-
-    const confirmQuit =
-        document.getElementById("confirmQuit");
-
-    const cancelQuit =
-        document.getElementById("cancelQuit");
+    const quitBtn = document.getElementById("quitBtn");
+    const quitModal = document.getElementById("quitModal");
+    const confirmQuit = document.getElementById("confirmQuit");
+    const cancelQuit = document.getElementById("cancelQuit");
 
     if (quitBtn && quitModal) {
 
         quitBtn.addEventListener("click", () => {
-
             quitModal.classList.remove("hidden");
 
         });
@@ -53,7 +41,7 @@ export function initControls() {
 
         confirmQuit.addEventListener("click", () => {
 
-            window.location.href = "/";
+            window.location.href = "home.html";
 
         });
     }
@@ -97,7 +85,7 @@ export function initControls() {
 
             const move =
                 voteInput.value.trim();
-
+                         
             if (!move) return;
 
             alert(`Vote submitted: ${move}`);

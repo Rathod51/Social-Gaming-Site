@@ -14,7 +14,6 @@ export function initChat({ socket, roomId, role }) {
     if (chatToggleBtn && chatBox) {
 
         chatToggleBtn.addEventListener("click", () => {
-
             chatBox.classList.toggle("hidden");
 
         });
@@ -60,6 +59,7 @@ export function initChat({ socket, roomId, role }) {
             bubble.classList.add("me");
         } else {
             bubble.classList.add("other");
+        }
         
         const date = new Date(time);
         const formattedTime = date.toLocaleTimeString([], {
@@ -73,15 +73,11 @@ export function initChat({ socket, roomId, role }) {
                 <span>${formattedTime}</span>
             </div>
 
-            <div class="msgText">
-                ${message}
-            </div>
+            <div class="msgText">${message}</div>
         `;
 
         chatMessages.appendChild(bubble);
-
         chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
     });
 
     // TYPING
@@ -117,45 +113,23 @@ export function initChat({ socket, roomId, role }) {
     
     sendBtn.onclick = () => {
 
-    const msg =chatInput.value.trim();
+        const msg =chatInput.value.trim();
 
-    if (!msg) return;
-    socket.emit("chatMessage", {
-        roomId,
-        role,
-        message: msg
-    });
+        if (!msg) return;
+        socket.emit("chatMessage", {
+            roomId,
+            role,
+            message: msg
+        });
 
-    addMessage({
+        addMessage({
+            username:window.username,
+            message: msg,
+            time: Date.now()
+        });
 
-        username:window.username,
-        message: msg,
-        time: Date.now()
-    });
-
-    chatInput.value = "";
-    chatInput.focus();
-};
+        chatInput.value = "";
+        chatInput.focus();
+    };
     
-    
-    
-    
-    
-    // ADD MESSAGE LOCALLY
-
-    addMessage({
-
-        username:
-            window.username,
-
-        message: msg,
-
-        time: Date.now()
-    });
-
-    // CLEAR INPUT
-
-    chatInput.value = "";
-
-    chatInput.focus();
 };

@@ -16,14 +16,8 @@ let playerRole = "white";
 // USERNAME
 // =======================
 
-const username =
-
-    localStorage.getItem("username")
-
-    ||
-
-    "Player_" +
-    Math.floor(Math.random() * 1000);
+const username = localStorage.getItem("username") ||
+    "Player_" + Math.floor(Math.random() * 1000);
 
 window.username = username;
 
@@ -33,14 +27,8 @@ window.username = username;
 
 const roomId =
 
-    new URLSearchParams(
-        window.location.search
-    ).get("roomId")
-
-    ||
-
-    "global-room";
-
+    new URLSearchParams(window.location.search).get("roomId")|| "global-room";
+        
 // =======================
 // DRAG START
 // =======================
@@ -49,38 +37,55 @@ function onDragStart(source, piece) {
 
     // WRONG PLAYER COLOR
 
-    if (
-
-        (piece.startsWith("w")
-        &&
-        playerRole !== "white")
-
-        ||
-
-        (piece.startsWith("b")
-        &&
-        playerRole !== "black")
-
-    ) {
+    if ( (piece.startsWith("w")&& playerRole !== "white") ||
+            (piece.startsWith("b")&&playerRole !== "black")) {
 
         return false;
     }
 
+    // ONLY ACTIVE MOVER CAN MOVE
+
+        if (
+
+            playerRole === "white"
+
+            &&
+
+            (
+                !window.activeWhiteMover ||
+
+                window.activeWhiteMover.id !==
+                socket.id
+            )
+
+        ) {
+
+            return false;
+        }
+
+        if (
+
+            playerRole === "black"
+
+            &&
+
+            (
+                !window.activeBlackMover ||
+
+                window.activeBlackMover.id !==
+                socket.id
+            )
+
+        ) {
+
+            return false;
+        }
+
+
     // WRONG TURN
 
-    if (
-
-        (chess.turn() === "w"
-        &&
-        piece.startsWith("b"))
-
-        ||
-
-        (chess.turn() === "b"
-        &&
-        piece.startsWith("w"))
-
-    ) {
+    if ( (chess.turn() === "w" && piece.startsWith("b")) ||
+            (chess.turn() === "b" && piece.startsWith("w"))) {
 
         return false;
     }
@@ -148,16 +153,10 @@ function onDrop(source, target) {
 board = Chessboard("board", {
 
     draggable: true,
-
     position: "start",
-
     orientation: playerRole,
-
-    pieceTheme:
-        "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
-
+    pieceTheme: "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
     onDragStart,
-
     onDrop
 });
 
@@ -233,17 +232,27 @@ window.onload = () => {
     // CHAT
 
     initChat({
-
         socket,
-
         roomId,
-
         role: playerRole
     });
 
     // CONTROLS
 
     initControls();
+
+        const claimMoveBtn = document.getElementById("claimMoveBtn");
+
+        if (claimMoveBtn) {
+
+            claimMoveBtn.addEventListener("click",() => {
+                    socket.emit(
+                        "claimMove",
+                        { roomId }
+                    );
+            });
+        }
+
 
     // INFO PANEL
 
@@ -289,7 +298,7 @@ window.onload = () => {
     });
 };
 
-S
+
 
 
 

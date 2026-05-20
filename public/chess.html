@@ -36,43 +36,25 @@
 
         <!-- TURN -->
 
-        <h2 id="turnBanner">
-            WHITE TEAM TURN
-        </h2>
-
-        <p id="activeMoverText">
-            No active mover
-        </p>
-
-        <p id="leaderText">
-            Player:
-        </p>
+        <h2 id="turnBanner">WHITE TEAM TURN</h2>
+        <p id="activeMoverText">No active mover</p>
+        <!-- <p id="leaderText"> Player:</p> -->
 
         <!-- TIMERS -->
 
         <div class="timerContainer">
 
             <div class="timerBox">
-
                 <span>White</span>
-
-                <span id="whiteTimer">
-                    05:00
-                </span>
-
+                <span id="whiteTimer">05:00</span>
             </div>
 
             <div class="timerBox">
-
                 <span>Black</span>
+                <span id="blackTimer">05:00</span>
+            </div>        
+        </div>        
 
-                <span id="blackTimer">
-                    05:00
-                </span>
-
-            </div>
-
-        </div>
 
         <!-- CHESS BOARD -->
 
@@ -81,9 +63,7 @@
         <!-- CHAT BUTTON -->
 
         <button id="chatToggleBtn">
-
             <i class="fa-solid fa-comments"></i>
-
         </button>
 
         <!-- CHAT BOX -->
@@ -91,25 +71,12 @@
         <div id="chatBox" class="hidden">
 
             <div id="chatMessages"></div>
-
             <div id="typingIndicator"></div>
 
             <div id="chatInputArea">
-
-                <input
-                    type="text"
-                    id="chatInput"
-                    placeholder="Type message..."
-                >
-
-                <button id="sendBtn">
-                    Send
-                </button>
-
-                <button id="claimMoveBtn">
-                    I Make Move
-                </button>
-
+                <input type="text" id="chatInput" placeholder="Type message...">
+                <button id="sendBtn"> Send</button>
+                <button id="claimMoveBtn">I Make Move</button>
             </div>
 
         </div>
@@ -121,17 +88,8 @@
             <h3>Vote Move</h3>
 
             <div class="voteInputRow">
-
-                <input
-                    type="text"
-                    id="voteMoveInput"
-                    placeholder="e2e4"
-                >
-
-                <button id="voteBtn">
-                    Vote
-                </button>
-
+                <input type="text" id="voteMoveInput" placeholder="e2e4">
+                <button id="voteBtn">Vote</button>
             </div>
 
             <div id="voteResults"></div>
@@ -152,85 +110,38 @@
         <!-- HISTORY BOX -->
 
         <div id="historyBox" class="floatingBox hidden">
-
-            <div class="historyHeader">
-
-                Move History
-
-            </div>
-
-            <div
-                id="moveHistory"
-                class="historyContent"
-            ></div>
-
+            <div class="historyHeader">Move History</div>
+            <div id="moveHistory" class="historyContent"></div>
         </div>
 
         <!-- INFO PANEL -->
 
         <div id="infoPanel">
-
             <h3>White Team</h3>
-
             <div id="whiteTeam"></div>
 
             <h3>Black Team</h3>
-
             <div id="blackTeam"></div>
-
         </div>
-
     </div>
 
     <!-- QUIT MODAL -->
 
     <div id="quitModal" class="modal hidden">
-
         <div class="modalContent">
-
-            <p>
-                Are you sure you want to quit?
-            </p>
-
-            <button id="confirmQuit">
-                Yes
-            </button>
-
-            <button id="cancelQuit">
-                No
-            </button>
-
+            <p> Are you sure you want to quit? </p>
+            <button id="confirmQuit">Yes</button>
+            <button id="cancelQuit">No</button>
         </div>
-
     </div>
 
     <!-- GAME RESULT -->
 
-    <div
-        id="gameResultModal"
-        class="gameResultModal hidden"
-    >
-
+    <div id="gameResultModal" class="gameResultModal hidden">
         <div class="gameResultCard">
-
-            <h2 id="gameResultText">
-
-                WHITE WINS
-
-            </h2>
-
-            <button id="newGameBtn">
-
-                New Game
-
-            </button>
-
-            <button id="exitGameBtn">
-
-                Exit
-
-            </button>
-
+            <h2 id="gameResultText">WHITE WINS </h2>
+            <button id="newGameBtn"> New Game </button>
+            <button id="exitGameBtn"> Exit </button>
         </div>
 
     </div>

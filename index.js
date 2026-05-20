@@ -119,25 +119,18 @@ io.on("connection", (socket) => {
     }) => {
 
         socket.join(roomId);
-
         socket.username = username;
 
         // CREATE ROOM
 
         if (!rooms[roomId]) {
-
             rooms[roomId] = {
 
                 game: new Chess(),
-
                 whiteTeam: [],
-
                 blackTeam: [],
-
                 votes: {},
-
                 activeWhiteMover: null,
-
                 activeBlackMover: null
             };
         }
@@ -148,10 +141,7 @@ io.on("connection", (socket) => {
 
         let role = "white";
 
-        if (
-            room.whiteTeam.length >
-            room.blackTeam.length
-        ) {
+        if ( room.whiteTeam.length > room.blackTeam.length) {
 
             role = "black";
         }
@@ -290,6 +280,17 @@ io.on("connection", (socket) => {
             return;
         }
 
+        // RESET ACTIVE MOVER AFTER MOVE
+
+            if (move.color === "w") {
+
+                room.activeWhiteMover = null;
+
+            } else {
+
+                room.activeBlackMover = null;
+            }
+
         io.to(roomId).emit(
             "movePlayed",
             {
@@ -322,15 +323,11 @@ io.on("connection", (socket) => {
             "chatMessage",
             {
 
-                username:
-                    socket.username || "Player",
-
+                username: socket.username || "Player", 
                 role,
-
                 message,
-
                 time:
-                    Date.now()
+                Date.now()
             }
         );
     });
@@ -384,13 +381,17 @@ io.on("connection", (socket) => {
 
         if (player.role === "white") {
 
-            room.activeWhiteMover =
-                socket.id;
-
+             room.activeWhiteMover = {
+                id: socket.id,
+                username: player.username
+            };
+             
         } else {
 
-            room.activeBlackMover =
-                socket.id;
+           room.activeBlackMover = {
+                id: socket.id,
+                username: player.username
+            };
         }
 
         io.to(roomId).emit(

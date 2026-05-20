@@ -80,7 +80,7 @@ export function initGameEnd({
 
         exitGameBtn.addEventListener("click", () => {
 
-            window.location.href = "/";
+            window.location.href = "home.html";
         });
     }
 

@@ -190,6 +190,12 @@ CHAT BOX
     cursor:pointer;
 }
 
+.activePlayer {
+    border: 2px solid limegreen;
+    box-shadow:0 0 10px limegreen;
+    transform: scale(1.02);
+}
+
 /* =======================
 VOTE SYSTEM
 ======================= */

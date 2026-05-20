@@ -1,10 +1,8 @@
 export function initInfoPanel() {
 
-    const infoBtn =
-        document.getElementById("infoBtn");
+    const infoBtn = document.getElementById("infoBtn");
 
-    const infoPanel =
-        document.getElementById("infoPanel");
+    const infoPanel = document.getElementById("infoPanel");
 
     // TOGGLE PANEL
 
