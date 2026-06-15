@@ -120,6 +120,6 @@ This project explores the integration of social networking concepts with real-ti
 
 Twinkel Rathod
 
-M.Sc. Computer Science
+M.Sc. Mathematics and Computing
 
 Developer of a Real-Time Social Gaming Platform for Multiplayer Collaboration and Community Engagement.
